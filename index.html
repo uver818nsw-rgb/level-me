@@ -288,12 +288,71 @@
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
+/* ======================
+   名前入力
+====================== */
+
+.name-box{
+  display:flex;
+  gap:10px;
+  margin-top:14px;
+}
+
+.name-box input{
+  flex:1;
+  background:#222833;
+  border:none;
+  border-radius:12px;
+  padding:14px;
+  color:white;
+  font-size:16px;
+}
+
+.name-box button{
+  border:none;
+  background:#7C5CFF;
+  color:white;
+  padding:0 18px;
+  border-radius:12px;
+  cursor:pointer;
+}
+
+#welcomeText{
+  margin-top:14px;
+  color:#AAA;
+}
   </style>
 </head>
 
 <body>
 
 <div class="app">
+  
+<!-- プレイヤー名 -->
+
+<section class="card">
+
+  <h2>PLAYER NAME</h2>
+
+  <div class="name-box">
+
+    <input
+      type="text"
+      id="playerNameInput"
+      placeholder="名前を入力..."
+    >
+
+    <button id="saveName">
+      決定
+    </button>
+
+  </div>
+
+  <p id="welcomeText">
+    ようこそ、冒険者。
+  </p>
+
+</section>
 
   <!-- ヘッダー -->
   <header class="header">
@@ -411,7 +470,8 @@
     level: 1,
     exp: 0,
     streak: 0,
-
+    name: "",
+    
     stats: {
       mental: 1,
       discipline: 1,
@@ -498,6 +558,7 @@
   function addExp(amount){
 
     player.exp += amount;
+    playQuestSound();
     
 animateExp();
 
@@ -529,7 +590,8 @@ animateExp();
     newLevelText.innerText = `Lv.${player.level}`;
 
     modal.style.display = "flex";
-
+    playLevelUpSound();
+    
     setTimeout(() => {
       modal.style.display = "none";
     }, 2000);
@@ -618,6 +680,70 @@ function animateExp(){
     }
   );
 }
+// ======================
+// プレイヤー名
+// ======================
+
+const playerNameInput =
+  document.getElementById("playerNameInput");
+
+const saveName =
+  document.getElementById("saveName");
+
+const welcomeText =
+  document.getElementById("welcomeText");
+
+// 保存済み名前
+playerNameInput.value = player.name || "";
+
+if(player.name){
+  welcomeText.innerText =
+    `ようこそ、${player.name}`;
+}
+
+saveName.addEventListener("click", () => {
+
+  player.name = playerNameInput.value;
+
+  localStorage.setItem(
+    "player",
+    JSON.stringify(player)
+  );
+
+  welcomeText.innerText =
+    `ようこそ、${player.name}`;
+
+});
+// ======================
+// クエスト音
+// ======================
+
+function playQuestSound(){
+
+  const audio = new Audio(
+    "https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"
+  );
+
+  audio.volume = 0.3;
+
+  audio.play();
+}
+
+// ======================
+// レベルアップ音
+// ======================
+
+function playLevelUpSound(){
+
+  const audio = new Audio(
+    "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"
+  );
+
+  audio.volume = 0.4;
+
+  audio.play();
+}
+
 </script>
 
 </body>
