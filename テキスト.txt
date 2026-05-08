@@ -1,117 +1,192 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>LEVEL:ME</title>
+// ======================
+// 初期データ
+// ======================
 
-  <link rel="stylesheet" href="style.css"/>
+let player = JSON.parse(localStorage.getItem("player")) || {
+  level: 1,
+  exp: 0,
+  streak: 0,
 
-  <!-- フォント -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-</head>
+  stats: {
+    mental: 1,
+    discipline: 1,
+    confidence: 1,
+    social: 1,
+  }
+};
 
-<body>
+// ======================
+// クエスト
+// ======================
 
-  <div class="app">
+const quests = [
+  {
+    name: "水を飲む",
+    exp: 10
+  },
+  {
+    name: "5分散歩する",
+    exp: 15
+  },
+  {
+    name: "勉強15分",
+    exp: 20
+  },
+  {
+    name: "筋トレする",
+    exp: 20
+  },
+  {
+    name: "ジャーナリング",
+    exp: 15
+  }
+];
 
-    <!-- ヘッダー -->
-    <header class="header">
-      <div>
-        <p class="small-text">YOUR LEVEL</p>
-        <h1 id="level">Lv.1</h1>
-      </div>
+// ======================
+// HTML取得
+// ======================
 
-      <div class="streak-box">
-        🔥 <span id="streak">0</span> Days
-      </div>
-    </header>
+const level = document.getElementById("level");
+const expText = document.getElementById("expText");
+const expFill = document.getElementById("expFill");
+const streak = document.getElementById("streak");
 
-    <!-- EXP -->
-    <section class="card">
-      <div class="exp-top">
-        <span>EXP</span>
-        <span id="expText">0 / 100</span>
-      </div>
+const mental = document.getElementById("mental");
+const discipline = document.getElementById("discipline");
+const confidence = document.getElementById("confidence");
+const social = document.getElementById("social");
 
-      <div class="exp-bar">
-        <div class="exp-fill" id="expFill"></div>
-      </div>
-    </section>
+const questList = document.getElementById("questList");
 
-    <!-- 今日のメッセージ -->
-    <section class="card">
-      <p class="message">
-        昨日の自分を、
-        少し超えられれば十分。
-      </p>
-    </section>
+const modal = document.getElementById("levelupModal");
+const newLevelText = document.getElementById("newLevelText");
 
-    <!-- ステータス -->
-    <section class="card">
-      <h2>STATUS</h2>
+// ======================
+// 画面更新
+// ======================
 
-      <div class="status-grid">
+function updateUI(){
 
-        <div class="status-item">
-          <span>🧠 Mental</span>
-          <strong id="mental">1</strong>
-        </div>
+  level.innerText = `Lv.${player.level}`;
 
-        <div class="status-item">
-          <span>💪 Discipline</span>
-          <strong id="discipline">1</strong>
-        </div>
+  expText.innerText = `${player.exp} / 100`;
 
-        <div class="status-item">
-          <span>❤️ Confidence</span>
-          <strong id="confidence">1</strong>
-        </div>
+  expFill.style.width = `${player.exp}%`;
 
-        <div class="status-item">
-          <span>🌎 Social</span>
-          <strong id="social">1</strong>
-        </div>
+  streak.innerText = player.streak;
 
-      </div>
-    </section>
+  mental.innerText = player.stats.mental;
+  discipline.innerText = player.stats.discipline;
+  confidence.innerText = player.stats.confidence;
+  social.innerText = player.stats.social;
 
-    <!-- 今日のクエスト -->
-    <section class="card">
-      <div class="quest-header">
-        <h2>DAILY QUEST</h2>
-      </div>
+  localStorage.setItem(
+    "player",
+    JSON.stringify(player)
+  );
+}
 
-      <div id="questList">
+// ======================
+// EXP追加
+// ======================
 
-      </div>
-    </section>
+function addExp(amount){
 
-    <!-- 感情ログ -->
-    <section class="card">
-      <h2>FEELING LOG</h2>
+  player.exp += amount;
 
-      <textarea
-        id="feelingInput"
-        placeholder="今日感じたことを書いてみよう..."
-      ></textarea>
+  // レベルアップ
+  if(player.exp >= 100){
 
-      <button id="saveFeeling">
-        保存する
-      </button>
-    </section>
+    player.exp = player.exp - 100;
 
-  </div>
+    player.level++;
 
-  <!-- レベルアップ演出 -->
-  <div class="levelup-modal" id="levelupModal">
-    <div class="levelup-content">
-      <h2>LEVEL UP!</h2>
-      <p id="newLevelText">Lv.2</p>
+    player.streak++;
+
+    // ステータス上昇
+    player.stats.mental++;
+    player.stats.discipline++;
+    player.stats.confidence++;
+    player.stats.social++;
+
+    showLevelUp();
+  }
+
+  updateUI();
+}
+
+// ======================
+// レベルアップ演出
+// ======================
+
+function showLevelUp(){
+
+  newLevelText.innerText = `Lv.${player.level}`;
+
+  modal.style.display = "flex";
+
+  setTimeout(() => {
+    modal.style.display = "none";
+  }, 2000);
+}
+
+// ======================
+// クエスト表示
+// ======================
+
+quests.forEach((quest) => {
+
+  const div = document.createElement("div");
+
+  div.classList.add("quest");
+
+  div.innerHTML = `
+    <div>
+      <h3>${quest.name}</h3>
+      <p>+${quest.exp} EXP</p>
     </div>
-  </div>
 
-  <script src="script.js"></script>
-</body>
-</html>
+    <button>
+      完了
+    </button>
+  `;
+
+  const button = div.querySelector("button");
+
+  button.addEventListener("click", () => {
+
+    addExp(quest.exp);
+
+    button.innerText = "達成!";
+    button.disabled = true;
+  });
+
+  questList.appendChild(div);
+});
+
+// ======================
+// 感情ログ
+// ======================
+
+const feelingInput =
+  document.getElementById("feelingInput");
+
+const saveFeeling =
+  document.getElementById("saveFeeling");
+
+saveFeeling.addEventListener("click", () => {
+
+  localStorage.setItem(
+    "feelingLog",
+    feelingInput.value
+  );
+
+  alert("感情ログを保存しました！");
+});
+
+// 保存済み読み込み
+feelingInput.value =
+  localStorage.getItem("feelingLog") || "";
+
+// 初期表示
+updateUI();
