@@ -195,7 +195,99 @@
         opacity:1;
       }
     }
+/* ======================
+   レベルアップ強化
+====================== */
 
+.levelup-content{
+  background: radial-gradient(
+    circle,
+    #2a2f5f,
+    #181C23
+  );
+
+  border:2px solid #FFD166;
+
+  box-shadow:
+    0 0 20px #FFD166,
+    0 0 60px rgba(255,209,102,0.4);
+
+  animation:
+    pop 0.5s ease,
+    glow 1.5s infinite alternate;
+}
+
+@keyframes glow{
+
+  from{
+    box-shadow:
+      0 0 10px #FFD166,
+      0 0 30px rgba(255,209,102,0.2);
+  }
+
+  to{
+    box-shadow:
+      0 0 30px #FFD166,
+      0 0 80px rgba(255,209,102,0.6);
+  }
+}
+
+/* ======================
+   ボタンアニメ
+====================== */
+
+.quest button{
+  transition:0.2s;
+}
+
+.quest button:active{
+  transform:scale(0.92);
+}
+
+/* ======================
+   達成済みボタン
+====================== */
+
+.quest button:disabled{
+  background:#4ADE80;
+  opacity:0.8;
+}
+
+/* ======================
+   カード浮遊感
+====================== */
+
+.card{
+  transition:0.3s;
+}
+
+.card:hover{
+  transform:translateY(-2px);
+}
+
+/* ======================
+   EXPバーアニメ
+====================== */
+
+.exp-fill{
+  box-shadow:
+    0 0 10px rgba(255,209,102,0.5);
+}
+
+/* ======================
+   レベル文字
+====================== */
+
+#level{
+  background:linear-gradient(
+    90deg,
+    #FFFFFF,
+    #FFD166
+  );
+
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
   </style>
 </head>
 
@@ -406,6 +498,8 @@
   function addExp(amount){
 
     player.exp += amount;
+    
+animateExp();
 
     if(player.exp >= 100){
 
@@ -501,7 +595,29 @@
 
   // 初期表示
   updateUI();
+// ======================
+// EXPアニメ
+// ======================
 
+function animateExp(){
+
+  expFill.animate(
+    [
+      {
+        transform:"scaleY(1)"
+      },
+      {
+        transform:"scaleY(1.4)"
+      },
+      {
+        transform:"scaleY(1)"
+      }
+    ],
+    {
+      duration:300
+    }
+  );
+}
 </script>
 
 </body>
