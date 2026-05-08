@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>LEVEL:ME</title>
+
+  <!-- フォント -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      background:#0F1115;
+      color:#F3F4F6;
+      font-family:'Inter', sans-serif;
+      min-height:100vh;
+    }
+
+    .app{
+      max-width:500px;
+      margin:auto;
+      padding:20px;
+    }
+
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:20px;
+    }
+
+    .small-text{
+      color:#888;
+      font-size:12px;
+    }
+
+    h1{
+      font-size:42px;
+    }
+
+    .card{
+      background:#181C23;
+      border:1px solid rgba(255,255,255,0.05);
+      border-radius:20px;
+      padding:20px;
+      margin-bottom:16px;
+      backdrop-filter:blur(10px);
+    }
+
+    .streak-box{
+      background:#222833;
+      padding:10px 14px;
+      border-radius:14px;
+      font-weight:600;
+    }
+
+    .exp-top{
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:10px;
+    }
+
+    .exp-bar{
+      width:100%;
+      height:16px;
+      background:#2A2F3A;
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .exp-fill{
+      width:0%;
+      height:100%;
+      background:linear-gradient(90deg,#FFD166,#7C5CFF);
+      transition:0.4s;
+    }
+
+    .message{
+      font-size:18px;
+      line-height:1.6;
+      color:#DDD;
+    }
+
+    .status-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .status-item{
+      background:#222833;
+      padding:16px;
+      border-radius:16px;
+    }
+
+    .status-item span{
+      display:block;
+      color:#AAA;
+      margin-bottom:6px;
+    }
+
+    .status-item strong{
+      font-size:24px;
+    }
+
+    .quest{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      background:#222833;
+      padding:14px;
+      border-radius:14px;
+      margin-top:12px;
+    }
+
+    .quest button{
+      border:none;
+      background:#7C5CFF;
+      color:white;
+      padding:10px 14px;
+      border-radius:12px;
+      cursor:pointer;
+    }
+
+    textarea{
+      width:100%;
+      min-height:120px;
+      margin-top:16px;
+      background:#222833;
+      border:none;
+      border-radius:16px;
+      padding:16px;
+      color:white;
+      resize:none;
+    }
+
+    #saveFeeling{
+      width:100%;
+      margin-top:12px;
+      border:none;
+      padding:14px;
+      border-radius:14px;
+      background:#00D1B2;
+      color:white;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    .levelup-modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.7);
+      display:none;
+      justify-content:center;
+      align-items:center;
+      z-index:999;
+    }
+
+    .levelup-content{
+      background:#181C23;
+      padding:40px;
+      border-radius:24px;
+      text-align:center;
+      animation:pop 0.5s ease;
+    }
+
+    .levelup-content h2{
+      font-size:40px;
+      color:#FFD166;
+    }
+
+    .levelup-content p{
+      font-size:28px;
+      margin-top:10px;
+    }
+
+    @keyframes pop{
+      0%{
+        transform:scale(0.6);
+        opacity:0;
+      }
+
+      100%{
+        transform:scale(1);
+        opacity:1;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- ヘッダー -->
+  <header class="header">
+
+    <div>
+      <p class="small-text">YOUR LEVEL</p>
+      <h1 id="level">Lv.1</h1>
+    </div>
+
+    <div class="streak-box">
+      🔥 <span id="streak">0</span> Days
+    </div>
+
+  </header>
+
+  <!-- EXP -->
+  <section class="card">
+
+    <div class="exp-top">
+      <span>EXP</span>
+      <span id="expText">0 / 100</span>
+    </div>
+
+    <div class="exp-bar">
+      <div class="exp-fill" id="expFill"></div>
+    </div>
+
+  </section>
+
+  <!-- メッセージ -->
+  <section class="card">
+
+    <p class="message">
+      昨日の自分を、
+      少し超えられれば十分。
+    </p>
+
+  </section>
+
+  <!-- ステータス -->
+  <section class="card">
+
+    <h2>STATUS</h2>
+
+    <div class="status-grid">
+
+      <div class="status-item">
+        <span>🧠 Mental</span>
+        <strong id="mental">1</strong>
+      </div>
+
+      <div class="status-item">
+        <span>💪 Discipline</span>
+        <strong id="discipline">1</strong>
+      </div>
+
+      <div class="status-item">
+        <span>❤️ Confidence</span>
+        <strong id="confidence">1</strong>
+      </div>
+
+      <div class="status-item">
+        <span>🌎 Social</span>
+        <strong id="social">1</strong>
+      </div>
+
+    </div>
+
+  </section>
+
+  <!-- クエスト -->
+  <section class="card">
+
+    <h2>DAILY QUEST</h2>
+
+    <div id="questList"></div>
+
+  </section>
+
+  <!-- 感情ログ -->
+  <section class="card">
+
+    <h2>FEELING LOG</h2>
+
+    <textarea
+      id="feelingInput"
+      placeholder="今日感じたことを書いてみよう..."
+    ></textarea>
+
+    <button id="saveFeeling">
+      保存する
+    </button>
+
+  </section>
+
+</div>
+
+<!-- レベルアップ -->
+<div class="levelup-modal" id="levelupModal">
+
+  <div class="levelup-content">
+    <h2>LEVEL UP!</h2>
+    <p id="newLevelText">Lv.2</p>
+  </div>
+
+</div>
+
+<script>
+
+  // ======================
+  // 初期データ
+  // ======================
+
+  let player = JSON.parse(localStorage.getItem("player")) || {
+    level: 1,
+    exp: 0,
+    streak: 0,
+
+    stats: {
+      mental: 1,
+      discipline: 1,
+      confidence: 1,
+      social: 1,
+    }
+  };
+
+  // ======================
+  // クエスト
+  // ======================
+
+  const quests = [
+    {
+      name: "水を飲む",
+      exp: 10
+    },
+    {
+      name: "5分散歩する",
+      exp: 15
+    },
+    {
+      name: "勉強15分",
+      exp: 20
+    },
+    {
+      name: "筋トレする",
+      exp: 20
+    },
+    {
+      name: "ジャーナリング",
+      exp: 15
+    }
+  ];
+
+  // ======================
+  // HTML取得
+  // ======================
+
+  const level = document.getElementById("level");
+  const expText = document.getElementById("expText");
+  const expFill = document.getElementById("expFill");
+  const streak = document.getElementById("streak");
+
+  const mental = document.getElementById("mental");
+  const discipline = document.getElementById("discipline");
+  const confidence = document.getElementById("confidence");
+  const social = document.getElementById("social");
+
+  const questList = document.getElementById("questList");
+
+  const modal = document.getElementById("levelupModal");
+  const newLevelText = document.getElementById("newLevelText");
+
+  // ======================
+  // UI更新
+  // ======================
+
+  function updateUI(){
+
+    level.innerText = `Lv.${player.level}`;
+
+    expText.innerText = `${player.exp} / 100`;
+
+    expFill.style.width = `${player.exp}%`;
+
+    streak.innerText = player.streak;
+
+    mental.innerText = player.stats.mental;
+    discipline.innerText = player.stats.discipline;
+    confidence.innerText = player.stats.confidence;
+    social.innerText = player.stats.social;
+
+    localStorage.setItem(
+      "player",
+      JSON.stringify(player)
+    );
+  }
+
+  // ======================
+  // EXP追加
+  // ======================
+
+  function addExp(amount){
+
+    player.exp += amount;
+
+    if(player.exp >= 100){
+
+      player.exp = player.exp - 100;
+
+      player.level++;
+
+      player.streak++;
+
+      player.stats.mental++;
+      player.stats.discipline++;
+      player.stats.confidence++;
+      player.stats.social++;
+
+      showLevelUp();
+    }
+
+    updateUI();
+  }
+
+  // ======================
+  // レベルアップ演出
+  // ======================
+
+  function showLevelUp(){
+
+    newLevelText.innerText = `Lv.${player.level}`;
+
+    modal.style.display = "flex";
+
+    setTimeout(() => {
+      modal.style.display = "none";
+    }, 2000);
+  }
+
+  // ======================
+  // クエスト表示
+  // ======================
+
+  quests.forEach((quest) => {
+
+    const div = document.createElement("div");
+
+    div.classList.add("quest");
+
+    div.innerHTML = `
+      <div>
+        <h3>${quest.name}</h3>
+        <p>+${quest.exp} EXP</p>
+      </div>
+
+      <button>
+        完了
+      </button>
+    `;
+
+    const button = div.querySelector("button");
+
+    button.addEventListener("click", () => {
+
+      addExp(quest.exp);
+
+      button.innerText = "達成!";
+      button.disabled = true;
+    });
+
+    questList.appendChild(div);
+  });
+
+  // ======================
+  // 感情ログ
+  // ======================
+
+  const feelingInput =
+    document.getElementById("feelingInput");
+
+  const saveFeeling =
+    document.getElementById("saveFeeling");
+
+  saveFeeling.addEventListener("click", () => {
+
+    localStorage.setItem(
+      "feelingLog",
+      feelingInput.value
+    );
+
+    alert("感情ログを保存しました！");
+  });
+
+  // 保存済み読み込み
+  feelingInput.value =
+    localStorage.getItem("feelingLog") || "";
+
+  // 初期表示
+  updateUI();
+
+</script>
+
+</body>
+</html>
