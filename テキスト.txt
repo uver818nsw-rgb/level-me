@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>LEVEL:ME</title>
+
+  <link rel="stylesheet" href="style.css"/>
+
+  <!-- フォント -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- ヘッダー -->
+    <header class="header">
+      <div>
+        <p class="small-text">YOUR LEVEL</p>
+        <h1 id="level">Lv.1</h1>
+      </div>
+
+      <div class="streak-box">
+        🔥 <span id="streak">0</span> Days
+      </div>
+    </header>
+
+    <!-- EXP -->
+    <section class="card">
+      <div class="exp-top">
+        <span>EXP</span>
+        <span id="expText">0 / 100</span>
+      </div>
+
+      <div class="exp-bar">
+        <div class="exp-fill" id="expFill"></div>
+      </div>
+    </section>
+
+    <!-- 今日のメッセージ -->
+    <section class="card">
+      <p class="message">
+        昨日の自分を、
+        少し超えられれば十分。
+      </p>
+    </section>
+
+    <!-- ステータス -->
+    <section class="card">
+      <h2>STATUS</h2>
+
+      <div class="status-grid">
+
+        <div class="status-item">
+          <span>🧠 Mental</span>
+          <strong id="mental">1</strong>
+        </div>
+
+        <div class="status-item">
+          <span>💪 Discipline</span>
+          <strong id="discipline">1</strong>
+        </div>
+
+        <div class="status-item">
+          <span>❤️ Confidence</span>
+          <strong id="confidence">1</strong>
+        </div>
+
+        <div class="status-item">
+          <span>🌎 Social</span>
+          <strong id="social">1</strong>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- 今日のクエスト -->
+    <section class="card">
+      <div class="quest-header">
+        <h2>DAILY QUEST</h2>
+      </div>
+
+      <div id="questList">
+
+      </div>
+    </section>
+
+    <!-- 感情ログ -->
+    <section class="card">
+      <h2>FEELING LOG</h2>
+
+      <textarea
+        id="feelingInput"
+        placeholder="今日感じたことを書いてみよう..."
+      ></textarea>
+
+      <button id="saveFeeling">
+        保存する
+      </button>
+    </section>
+
+  </div>
+
+  <!-- レベルアップ演出 -->
+  <div class="levelup-modal" id="levelupModal">
+    <div class="levelup-content">
+      <h2>LEVEL UP!</h2>
+      <p id="newLevelText">Lv.2</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
