@@ -585,7 +585,41 @@
 </div>
 
 <script>
+let devMode = true; 
+function log(msg){
 
+  if(!devMode) return;
+
+  const div = document.createElement("div");
+  div.innerText = "[LOG] " + msg;
+
+  div.style.position = "fixed";
+  div.style.bottom = "0";
+  div.style.left = "0";
+  div.style.background = "black";
+  div.style.color = "lime";
+  div.style.fontSize = "12px";
+  div.style.zIndex = "9999";
+  div.style.padding = "4px";
+
+  document.body.appendChild(div);
+}
+function error(msg){
+
+  const div = document.createElement("div");
+  div.innerText = "❌ " + msg;
+
+  div.style.position = "fixed";
+  div.style.bottom = "20px";
+  div.style.left = "0";
+  div.style.background = "red";
+  div.style.color = "white";
+  div.style.fontSize = "12px";
+  div.style.zIndex = "9999";
+  div.style.padding = "4px";
+
+  document.body.appendChild(div);
+}
   // ======================
   // 初期データ
   // ======================
@@ -656,7 +690,9 @@
   // UI更新
   // ======================
 
-  function updateUI(){
+function updateUI(){
+
+  log("updateUI start"); 
 
   level.innerText = `Lv.${player.level}`;
   expText.innerText = `${player.exp} / 100`;
@@ -674,6 +710,8 @@
     "player",
     JSON.stringify(player)
   );
+
+  log("updateUI before chart"); 
 
   createStatusChart(); 
 }
