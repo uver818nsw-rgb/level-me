@@ -588,6 +588,7 @@
 </div>
 
 <script>
+console.log("JS START");
 let devMode = false;
 
 function log(msg){
@@ -1094,6 +1095,14 @@ function toggleDebug(){
   log("debug mode: " + devMode);
 }
 window.addEventListener("DOMContentLoaded", () => {
+
+    console.log("DOM READY");
+
+    updateUI();
+
+    renderQuests();
+
+  });
 </script>
 <!-- 音 -->
 
