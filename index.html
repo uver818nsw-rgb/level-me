@@ -321,6 +321,72 @@
   margin-top:14px;
   color:#AAA;
 }
+/* ======================
+   称号
+====================== */
+
+.title-box{
+  margin-top:16px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #7C5CFF,
+      #00D1B2
+    );
+
+  padding:20px;
+
+  border-radius:18px;
+
+  text-align:center;
+
+  box-shadow:
+    0 0 20px rgba(124,92,255,0.4);
+}
+
+#playerTitle{
+  font-size:24px;
+  font-weight:700;
+  letter-spacing:2px;
+}
+/* ======================
+   クエスト追加
+====================== */
+
+.add-quest{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+  margin-bottom:16px;
+}
+
+.add-quest input{
+  background:#222833;
+  border:none;
+  border-radius:12px;
+  padding:12px;
+  color:white;
+}
+
+#questNameInput{
+  flex:1;
+}
+
+#questExpInput{
+  width:80px;
+}
+
+#addQuestBtn{
+  border:none;
+  background:#00D1B2;
+  color:white;
+  border-radius:12px;
+  padding:0 16px;
+  font-size:20px;
+  cursor:pointer;
+}
+
   </style>
 </head>
 
@@ -391,6 +457,21 @@
     </p>
 
   </section>
+<!-- 称号 -->
+
+<section class="card">
+
+  <h2>TITLE</h2>
+
+  <div class="title-box">
+
+    <p id="playerTitle">
+      覚醒者
+    </p>
+
+  </div>
+
+</section>
 
   <!-- ステータス -->
   <section class="card">
@@ -427,6 +508,28 @@
   <section class="card">
 
     <h2>DAILY QUEST</h2>
+
+<!-- クエスト追加 -->
+
+<div class="add-quest">
+
+  <input
+    type="text"
+    id="questNameInput"
+    placeholder="新しいクエスト"
+  >
+
+  <input
+    type="number"
+    id="questExpInput"
+    placeholder="EXP"
+  >
+
+  <button id="addQuestBtn">
+    ＋
+  </button>
+
+</div>
 
     <div id="questList"></div>
 
@@ -484,28 +587,26 @@
   // クエスト
   // ======================
 
-  const quests = [
-    {
-      name: "水を飲む",
-      exp: 10
-    },
-    {
-      name: "5分散歩する",
-      exp: 15
-    },
-    {
-      name: "勉強15分",
-      exp: 20
-    },
-    {
-      name: "筋トレする",
-      exp: 20
-    },
-    {
-      name: "ジャーナリング",
-      exp: 15
-    }
-  ];
+  let quests = JSON.parse(
+  localStorage.getItem("quests")
+) || [
+
+  {
+    name: "水を飲む",
+    exp: 10
+  },
+
+  {
+    name: "5分散歩する",
+    exp: 15
+  },
+
+  {
+    name: "勉強15分",
+    exp: 20
+  }
+
+];
 
   // ======================
   // HTML取得
@@ -520,7 +621,9 @@
   const discipline = document.getElementById("discipline");
   const confidence = document.getElementById("confidence");
   const social = document.getElementById("social");
-
+  const playerTitle =
+  document.getElementById("playerTitle");
+  
   const questList = document.getElementById("questList");
 
   const modal = document.getElementById("levelupModal");
@@ -544,7 +647,8 @@
     discipline.innerText = player.stats.discipline;
     confidence.innerText = player.stats.confidence;
     social.innerText = player.stats.social;
-
+    updateTitle();
+    
     localStorage.setItem(
       "player",
       JSON.stringify(player)
@@ -601,6 +705,14 @@ animateExp();
   // クエスト表示
   // ======================
 
+  // ======================
+// クエスト表示
+// ======================
+
+function renderQuests(){
+
+  questList.innerHTML = "";
+
   quests.forEach((quest) => {
 
     const div = document.createElement("div");
@@ -629,7 +741,16 @@ animateExp();
     });
 
     questList.appendChild(div);
+
   });
+
+  localStorage.setItem(
+    "quests",
+    JSON.stringify(quests)
+  );
+}
+
+renderQuests();
 
   // ======================
   // 感情ログ
@@ -721,10 +842,10 @@ saveName.addEventListener("click", () => {
 function playQuestSound(){
 
   const audio = new Audio(
-    "https://assets.mixkit.co/active_storage/sfx/2019/2019-preview.mp3"
+    "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3"
   );
 
-  audio.volume = 0.3;
+  audio.volume = 0.25;
 
   audio.play();
 }
@@ -736,13 +857,73 @@ function playQuestSound(){
 function playLevelUpSound(){
 
   const audio = new Audio(
-    "https://assets.mixkit.co/active_storage/sfx/1435/1435-preview.mp3"
+    "https://cdn.pixabay.com/download/audio/2022/03/10/audio_2701e64df7.mp3"
   );
 
   audio.volume = 0.4;
 
   audio.play();
 }
+}
+// ======================
+// 称号システム
+// ======================
+
+function updateTitle(){
+
+  let title = "覚醒者";
+
+  if(player.level >= 3){
+    title = "成長の旅人";
+  }
+
+  if(player.level >= 5){
+    title = "習慣化の騎士";
+  }
+
+  if(player.level >= 10){
+    title = "人生攻略者";
+  }
+
+  playerTitle.innerText = title;
+}
+// ======================
+// クエスト追加
+// ======================
+
+const questNameInput =
+  document.getElementById("questNameInput");
+
+const questExpInput =
+  document.getElementById("questExpInput");
+
+const addQuestBtn =
+  document.getElementById("addQuestBtn");
+
+addQuestBtn.addEventListener("click", () => {
+
+  const name = questNameInput.value;
+
+  const exp = Number(
+    questExpInput.value
+  );
+
+  // 空なら追加しない
+  if(!name || !exp){
+    return;
+  }
+
+  quests.push({
+    name:name,
+    exp:exp
+  });
+
+  renderQuests();
+
+  // 入力リセット
+  questNameInput.value = "";
+  questExpInput.value = "";
+});
 
 </script>
 
