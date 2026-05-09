@@ -587,121 +587,53 @@
 </div>
 
 <script>
-console.log("JS START");
-let devMode = false;
-
-function log(msg){
-  if(!devMode) return;
-
-  const div = document.createElement("div");
-  div.innerText = "[LOG] " + msg;
-
-  div.style.position = "fixed";
-  div.style.bottom = "0";
-  div.style.left = "0";
-  div.style.background = "black";
-  div.style.color = "lime";
-  div.style.fontSize = "12px";
-  div.style.zIndex = "9999";
-  div.style.padding = "4px";
-
-  document.body.appendChild(div);
-}
-function error(msg){
-
-  const div = document.createElement("div");
-
-  div.innerText = "❌ " + msg;
-
-  div.style.position = "fixed";
-  div.style.bottom = "20px";
-  div.style.left = "0";
-  div.style.background = "red";
-  div.style.color = "white";
-  div.style.fontSize = "12px";
-  div.style.zIndex = "9999";
-  div.style.padding = "4px";
-
-  document.body.appendChild(div);
-}
-
-  // ======================
-  // 初期データ
-  // ======================
-
-  let player = JSON.parse(localStorage.getItem("player")) || {
-    level: 1,
-    exp: 0,
-    streak: 0,
-    name: "",
-    
-    stats: {
-      mental: 1,
-      discipline: 1,
-      confidence: 1,
-      social: 1,
-    }
-  };
-
-  // ======================
-  // クエスト
-  // ======================
-
-  let quests = JSON.parse(
-  localStorage.getItem("quests")
-) || [
-
-  {
-    name: "水を飲む",
-    exp: 10
-  },
-
-  {
-    name: "5分散歩する",
-    exp: 15
-  },
-
-  {
-    name: "勉強15分",
-    exp: 20
+const player = JSON.parse(localStorage.getItem("player")) || {
+  level: 1,
+  exp: 0,
+  streak: 0,
+  name: "",
+  stats: {
+    mental: 1,
+    discipline: 1,
+    confidence: 1,
+    social: 1
   }
+};
 
+let quests = JSON.parse(localStorage.getItem("quests")) || [
+  { name: "水を飲む", exp: 10 },
+  { name: "5分散歩する", exp: 15 }
 ];
 
-  // ======================
-  // HTML取得
-  // ======================
+const level = document.getElementById("level");
+const expText = document.getElementById("expText");
+const expFill = document.getElementById("expFill");
+const streak = document.getElementById("streak");
 
-  const level = document.getElementById("level");
-  const expText = document.getElementById("expText");
-  const expFill = document.getElementById("expFill");
-  const streak = document.getElementById("streak");
+const mental = document.getElementById("mental");
+const discipline = document.getElementById("discipline");
+const confidence = document.getElementById("confidence");
+const social = document.getElementById("social");
 
-  const mental = document.getElementById("mental");
-  const discipline = document.getElementById("discipline");
-  const confidence = document.getElementById("confidence");
-  const social = document.getElementById("social");
-  const playerTitle =
-  document.getElementById("playerTitle");
-  const statusChartCanvas =
-  document.getElementById("statusChart");
-  console.log("canvas:", statusChartCanvas);
-  const questList = document.getElementById("questList");
+const playerNameInput = document.getElementById("playerNameInput");
+const saveName = document.getElementById("saveName");
+const welcomeText = document.getElementById("welcomeText");
 
-  const modal = document.getElementById("levelupModal");
-  const newLevelText = document.getElementById("newLevelText");
+const questList = document.getElementById("questList");
 
-  // ======================
-  // UI更新
-  // ======================
+const questNameInput = document.getElementById("questNameInput");
+const questExpInput = document.getElementById("questExpInput");
+const addQuestBtn = document.getElementById("addQuestBtn");
+
+const statusChartCanvas = document.getElementById("statusChart");
+
+let statusChart;
 
 function updateUI(){
 
-  log("updateUI start"); 
-
-  level.innerText = `Lv.${player.level}`;
-  expText.innerText = `${player.exp} / 100`;
-  expFill.style.width = `${player.exp}%`;
+  level.innerText = Lv.${player.level};
+  expText.innerText = ${player.exp} / 100;
+  expFill.style.width = ${player.exp}%;
   streak.innerText = player.streak;
 
   mental.innerText = player.stats.mental;
@@ -709,288 +641,10 @@ function updateUI(){
   confidence.innerText = player.stats.confidence;
   social.innerText = player.stats.social;
 
-  updateTitle();
-
-  localStorage.setItem(
-    "player",
-    JSON.stringify(player)
-  );
-
-  log("updateUI before chart"); 
-
-  createStatusChart(); 
-}
-
-  // ======================
-  // EXP追加
-  // ======================
-
-  function addExp(amount){
-
-    player.exp += amount;
-    playQuestSound();
-    
-animateExp();
-
-    if(player.exp >= 100){
-
-      player.exp = player.exp - 100;
-
-      player.level++;
-
-      player.streak++;
-
-      player.stats.mental++;
-      player.stats.discipline++;
-      player.stats.confidence++;
-      player.stats.social++;
-
-      showLevelUp();
-    }
-
-    updateUI();
-  }
-
-  // ======================
-  // レベルアップ演出
-  // ======================
-
-  function showLevelUp(){
-
-    newLevelText.innerText = `Lv.${player.level}`;
-
-    modal.style.display = "flex";
-    playLevelUpSound();
-    
-    setTimeout(() => {
-      modal.style.display = "none";
-    }, 2000);
-  }
-
-  // ======================
-  // クエスト表示
-  // ======================
-
-  // ======================
-// クエスト表示
-// ======================
-
-function renderQuests(){
-
-  questList.innerHTML = "";
-
-  quests.forEach((quest, index) => {
-
-    const div = document.createElement("div");
-    div.classList.add("quest");
-
-    const isDone = quest.done === true;
-
-    div.innerHTML = `
-      <div>
-        <h3>${quest.name}</h3>
-        <p>+${quest.exp} EXP</p>
-      </div>
-
-      <button ${isDone ? "disabled" : ""}>
-        ${isDone ? "達成!" : "完了"}
-      </button>
-    `;
-
-    const button = div.querySelector("button");
-
-    button.addEventListener("click", () => {
-
-      if(quest.done) return;
-
-      quest.done = true;
-
-      addExp(quest.exp);
-
-      renderQuests(); // ←再描画で確実に反映
-    });
-
-    questList.appendChild(div);
-  });
-
-  localStorage.setItem("quests", JSON.stringify(quests));
-}
-
-  // ======================
-  // 感情ログ
-  // ======================
-
-  const feelingInput =
-    document.getElementById("feelingInput");
-
-  const saveFeeling =
-    document.getElementById("saveFeeling");
-
-  saveFeeling.addEventListener("click", () => {
-
-    localStorage.setItem(
-      "feelingLog",
-      feelingInput.value
-    );
-
-    alert("感情ログを保存しました！");
-  });
-
-  // 保存済み読み込み
-  feelingInput.value =
-    localStorage.getItem("feelingLog") || "";
-
-  // 初期表示
-  updateUI();
-// ======================
-// EXPアニメ
-// ======================
-
-function animateExp(){
-
-  expFill.animate(
-    [
-      {
-        transform:"scaleY(1)"
-      },
-      {
-        transform:"scaleY(1.4)"
-      },
-      {
-        transform:"scaleY(1)"
-      }
-    ],
-    {
-      duration:300
-    }
-  );
-}
-// ======================
-// プレイヤー名
-// ======================
-
-const playerNameInput =
-  document.getElementById("playerNameInput");
-
-const saveName =
-  document.getElementById("saveName");
-
-const welcomeText =
-  document.getElementById("welcomeText");
-
-// 保存済み名前
-playerNameInput.value = player.name || "";
-
-if(player.name){
-  welcomeText.innerText =
-    `ようこそ、${player.name}`;
-}
-
-saveName.addEventListener("click", () => {
-
-  const name = playerNameInput.value.trim();
-
-  if(!name) return;
-
-  player.name = name;
-
   localStorage.setItem("player", JSON.stringify(player));
 
-  welcomeText.textContent = `ようこそ、${player.name}`;
-
-  playerNameInput.blur(); // ←これ地味に重要（入力確定）
-});
-// ======================
-// クエスト音
-// ======================
-
-function playQuestSound(){
-
-  const sound =
-    document.getElementById("questSound");
-
-  sound.currentTime = 0;
-
-  sound.play();
+  createStatusChart();
 }
-
-// ======================
-// レベルアップ音
-// ======================
-
-function playLevelUpSound(){
-
-  const sound =
-    document.getElementById("levelUpSound");
-
-  sound.currentTime = 0;
-
-  sound.play();
-}
-// ======================
-// 称号システム
-// ======================
-
-function updateTitle(){
-
-  let title = "覚醒者";
-
-  if(player.level >= 3){
-    title = "成長の旅人";
-  }
-
-  if(player.level >= 5){
-    title = "習慣化の騎士";
-  }
-
-  if(player.level >= 10){
-    title = "人生攻略者";
-  }
-
-  playerTitle.innerText = title;
-}
-// ======================
-// クエスト追加
-// ======================
-
-const questNameInput =
-  document.getElementById("questNameInput");
-
-const questExpInput =
-  document.getElementById("questExpInput");
-
-const addQuestBtn =
-  document.getElementById("addQuestBtn");
-
-addQuestBtn.addEventListener("click", () => {
-
-  const name = questNameInput.value;
-
-  const exp = Number(
-    questExpInput.value
-  );
-
-  // 空なら追加しない
-  if(!name || !exp){
-    return;
-  }
-
-  quests.push({
-    name:name,
-    exp:exp
-  });
-
-  renderQuests();
-
-  // 入力リセット
-  questNameInput.value = "";
-  questExpInput.value = "";
-});
-// ======================
-// ステータスグラフ
-// ======================
-
-let statusChart;
 
 function createStatusChart(){
 
@@ -1003,17 +657,9 @@ function createStatusChart(){
     type: "radar",
 
     data: {
-
-      labels: [
-        "Mental",
-        "Discipline",
-        "Confidence",
-        "Social"
-      ],
+      labels: ["Mental","Discipline","Confidence","Social"],
 
       datasets: [{
-        label: "STATUS",
-
         data: [
           player.stats.mental,
           player.stats.discipline,
@@ -1021,57 +667,23 @@ function createStatusChart(){
           player.stats.social
         ],
 
-        fill: true,
-
         backgroundColor: "rgba(124,92,255,0.2)",
-
         borderColor: "#7C5CFF",
-
-        pointBackgroundColor: "#FFD166",
-
-        pointBorderColor: "#fff",
-
-        pointHoverBackgroundColor: "#fff",
-
-        pointHoverBorderColor: "#FFD166"
+        borderWidth: 2
       }]
     },
 
     options: {
-
       responsive: true,
 
       scales: {
-
         r: {
-
-          angleLines: {
-            color: "rgba(255,255,255,0.1)"
-          },
-
-          grid: {
-            color: "rgba(255,255,255,0.1)"
-          },
-
-          pointLabels: {
-            color: "#DDD",
-            font: {
-              size: 14
-            }
-          },
-
-          ticks: {
-            display: false,
-            stepSize: 1
-          },
-
           suggestedMin: 0,
           suggestedMax: 10
         }
       },
 
       plugins: {
-
         legend: {
           display: false
         }
@@ -1080,16 +692,77 @@ function createStatusChart(){
   });
 }
 
+function renderQuests(){
+
+  questList.innerHTML = "";
+
+  quests.forEach((quest) => {
+
+    const div = document.createElement("div");
+
+    div.classList.add("quest");
+
+    div.innerHTML =       <div>         <h3>${quest.name}</h3>         <p>+${quest.exp} EXP</p>       </div>        <button>完了</button>    ;
+
+    const button = div.querySelector("button");
+
+    button.addEventListener("click", () => {
+
+      player.exp += quest.exp;
+
+      updateUI();
+
+      button.innerText = "達成!";
+      button.disabled = true;
+    });
+
+    questList.appendChild(div);
+  });
+
+  localStorage.setItem("quests", JSON.stringify(quests));
+}
+
+saveName.addEventListener("click", () => {
+
+  player.name = playerNameInput.value;
+
+  welcomeText.innerText = ようこそ、${player.name};
+
+  localStorage.setItem("player", JSON.stringify(player));
+});
+
+addQuestBtn.addEventListener("click", () => {
+
+  const name = questNameInput.value;
+  const exp = Number(questExpInput.value);
+
+  if(!name || !exp){
+    return;
+  }
+
+  quests.push({
+    name,
+    exp
+  });
+
+  renderQuests();
+
+  questNameInput.value = "";
+  questExpInput.value = "";
+});
 
 window.addEventListener("DOMContentLoaded", () => {
 
-    console.log("DOM READY");
+  if(player.name){
+    welcomeText.innerText = ようこそ、${player.name};
+  }
 
-    updateUI();
+  playerNameInput.value = player.name;
 
-    renderQuests();
+  updateUI();
 
-  });
+  renderQuests();
+});});
 </script>
 <!-- 音 -->
 
