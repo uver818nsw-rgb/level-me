@@ -395,6 +395,11 @@
   width:100% !important;
   max-height:320px;
 }
+#statusChart{
+  width: 100% !important;
+  height: 300px !important;
+  display: block;
+}
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -483,11 +488,11 @@
 </section>
 
   <!-- ステータス -->
-  <canvas id="statusChart"></canvas>
+
   <section class="card">
 
     <h2>STATUS</h2>
-
+  <canvas id="statusChart"></canvas>
     <div class="status-grid">
 
       <div class="status-item">
@@ -645,27 +650,26 @@
   // ======================
 
   function updateUI(){
-createStatusChart();
-    level.innerText = `Lv.${player.level}`;
 
-    expText.innerText = `${player.exp} / 100`;
+  level.innerText = `Lv.${player.level}`;
+  expText.innerText = `${player.exp} / 100`;
+  expFill.style.width = `${player.exp}%`;
+  streak.innerText = player.streak;
 
-    expFill.style.width = `${player.exp}%`;
+  mental.innerText = player.stats.mental;
+  discipline.innerText = player.stats.discipline;
+  confidence.innerText = player.stats.confidence;
+  social.innerText = player.stats.social;
 
-    streak.innerText = player.streak;
+  updateTitle();
 
-    mental.innerText = player.stats.mental;
-    discipline.innerText = player.stats.discipline;
-    confidence.innerText = player.stats.confidence;
-    social.innerText = player.stats.social;
-    updateTitle();
-    
-    localStorage.setItem(
-      "player",
-      JSON.stringify(player)
-    );
-    createStatusChart();
-  }
+  localStorage.setItem(
+    "player",
+    JSON.stringify(player)
+  );
+
+  createStatusChart(); 
+}
 
   // ======================
   // EXP追加
@@ -836,15 +840,18 @@ if(player.name){
 
 saveName.addEventListener("click", () => {
 
-  player.name = playerNameInput.value;
+  const name = playerNameInput.value.trim();
+
+  if(!name) return;
+
+  player.name = name;
 
   localStorage.setItem(
     "player",
     JSON.stringify(player)
   );
 
-  welcomeText.innerText =
-    `ようこそ、${player.name}`;
+  welcomeText.innerText = `ようこそ、${player.name}`;
 
 });
 // ======================
@@ -1037,7 +1044,9 @@ function createStatusChart(){
     }
   );
 }
-
+window.addEventListener("DOMContentLoaded", () => {
+  updateUI();
+});
 </script>
 <!-- 音 -->
 
