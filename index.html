@@ -386,8 +386,17 @@
   font-size:20px;
   cursor:pointer;
 }
+/* ======================
+   ステータスグラフ
+====================== */
 
+#statusChart{
+  margin-top:20px;
+  width:100% !important;
+  max-height:320px;
+}
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
@@ -474,6 +483,7 @@
 </section>
 
   <!-- ステータス -->
+  <canvas id="statusChart"></canvas>
   <section class="card">
 
     <h2>STATUS</h2>
@@ -623,7 +633,8 @@
   const social = document.getElementById("social");
   const playerTitle =
   document.getElementById("playerTitle");
-  
+  const statusChartCanvas =
+  document.getElementById("statusChart");
   const questList = document.getElementById("questList");
 
   const modal = document.getElementById("levelupModal");
@@ -634,7 +645,7 @@
   // ======================
 
   function updateUI(){
-
+createStatusChart();
     level.innerText = `Lv.${player.level}`;
 
     expText.innerText = `${player.exp} / 100`;
@@ -653,6 +664,7 @@
       "player",
       JSON.stringify(player)
     );
+    createStatusChart();
   }
 
   // ======================
@@ -921,6 +933,110 @@ addQuestBtn.addEventListener("click", () => {
   questNameInput.value = "";
   questExpInput.value = "";
 });
+// ======================
+// ステータスグラフ
+// ======================
+
+let statusChart;
+
+function createStatusChart(){
+
+  // 既にあるなら更新前に削除
+  if(statusChart){
+    statusChart.destroy();
+  }
+
+  statusChart = new Chart(
+    statusChartCanvas,
+    {
+      type: "radar",
+
+      data: {
+
+        labels: [
+          "Mental",
+          "Discipline",
+          "Confidence",
+          "Social"
+        ],
+
+        datasets: [
+          {
+            label: "STATUS",
+
+            data: [
+              player.stats.mental,
+              player.stats.discipline,
+              player.stats.confidence,
+              player.stats.social
+            ],
+
+            fill: true,
+
+            backgroundColor:
+              "rgba(124,92,255,0.2)",
+
+            borderColor:
+              "#7C5CFF",
+
+            pointBackgroundColor:
+              "#FFD166",
+
+            pointBorderColor:
+              "#fff",
+
+            pointHoverBackgroundColor:
+              "#fff",
+
+            pointHoverBorderColor:
+              "#FFD166"
+          }
+        ]
+      },
+
+      options: {
+
+        responsive: true,
+
+        scales: {
+
+          r: {
+
+            angleLines: {
+              color: "rgba(255,255,255,0.1)"
+            },
+
+            grid: {
+              color: "rgba(255,255,255,0.1)"
+            },
+
+            pointLabels: {
+              color: "#DDD",
+              font: {
+                size: 14
+              }
+            },
+
+            ticks: {
+              display: false,
+              stepSize: 1
+            },
+
+            suggestedMin: 0,
+            suggestedMax: 10
+          }
+        },
+
+        plugins: {
+
+          legend: {
+            display: false
+          }
+        }
+      }
+    }
+  );
+}
 
 </script>
 <!-- 音 -->
