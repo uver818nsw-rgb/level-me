@@ -841,13 +841,12 @@ saveName.addEventListener("click", () => {
 
 function playQuestSound(){
 
-  const audio = new Audio(
-    "https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3"
-  );
+  const sound =
+    document.getElementById("questSound");
 
-  audio.volume = 0.25;
+  sound.currentTime = 0;
 
-  audio.play();
+  sound.play();
 }
 
 // ======================
@@ -856,13 +855,12 @@ function playQuestSound(){
 
 function playLevelUpSound(){
 
-  const audio = new Audio(
-    "https://cdn.pixabay.com/download/audio/2022/03/10/audio_2701e64df7.mp3"
-  );
+  const sound =
+    document.getElementById("levelUpSound");
 
-  audio.volume = 0.4;
+  sound.currentTime = 0;
 
-  audio.play();
+  sound.play();
 }
 // ======================
 // 称号システム
@@ -925,6 +923,17 @@ addQuestBtn.addEventListener("click", () => {
 });
 
 </script>
+<!-- 音 -->
+
+<audio
+  id="questSound"
+  src="https://assets.mixkit.co/active_storage/sfx/270/270-preview.mp3"
+></audio>
+
+<audio
+  id="levelUpSound"
+  src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"
+></audio>
 
 </body>
 </html>
