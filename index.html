@@ -400,6 +400,12 @@
   height: 300px !important;
   display: block;
 }
+#statusChart{
+  width: 100% !important;
+  height: 300px !important;
+  display: block;
+}
+
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -640,6 +646,7 @@
   document.getElementById("playerTitle");
   const statusChartCanvas =
   document.getElementById("statusChart");
+  console.log("canvas:", statusChartCanvas);
   const questList = document.getElementById("questList");
 
   const modal = document.getElementById("levelupModal");
@@ -729,11 +736,12 @@ function renderQuests(){
 
   questList.innerHTML = "";
 
-  quests.forEach((quest) => {
+  quests.forEach((quest, index) => {
 
     const div = document.createElement("div");
-
     div.classList.add("quest");
+
+    const isDone = quest.done === true;
 
     div.innerHTML = `
       <div>
@@ -741,8 +749,8 @@ function renderQuests(){
         <p>+${quest.exp} EXP</p>
       </div>
 
-      <button>
-        完了
+      <button ${isDone ? "disabled" : ""}>
+        ${isDone ? "達成!" : "完了"}
       </button>
     `;
 
@@ -750,23 +758,20 @@ function renderQuests(){
 
     button.addEventListener("click", () => {
 
+      if(quest.done) return;
+
+      quest.done = true;
+
       addExp(quest.exp);
 
-      button.innerText = "達成!";
-      button.disabled = true;
+      renderQuests(); // ←再描画で確実に反映
     });
 
     questList.appendChild(div);
-
   });
 
-  localStorage.setItem(
-    "quests",
-    JSON.stringify(quests)
-  );
+  localStorage.setItem("quests", JSON.stringify(quests));
 }
-
-renderQuests();
 
   // ======================
   // 感情ログ
@@ -846,13 +851,11 @@ saveName.addEventListener("click", () => {
 
   player.name = name;
 
-  localStorage.setItem(
-    "player",
-    JSON.stringify(player)
-  );
+  localStorage.setItem("player", JSON.stringify(player));
 
-  welcomeText.innerText = `ようこそ、${player.name}`;
+  welcomeText.textContent = `ようこそ、${player.name}`;
 
+  playerNameInput.blur(); // ←これ地味に重要（入力確定）
 });
 // ======================
 // クエスト音
