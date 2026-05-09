@@ -443,8 +443,7 @@
   <!-- ヘッダー -->
   <header class="header">
     <button id="debugBtn">DEBUG</button>
-  DEBUG
-</button>
+  
 
     <div>
       <p class="small-text">YOUR LEVEL</p>
@@ -995,105 +994,93 @@ let statusChart;
 
 function createStatusChart(){
 
-  // 既にあるなら更新前に削除
   if(statusChart){
     statusChart.destroy();
   }
 
-  statusChart = new Chart(
-    statusChartCanvas,
-    {
-      type: "radar",
+  statusChart = new Chart(statusChartCanvas, {
 
-      data: {
+    type: "radar",
 
-        labels: [
-          "Mental",
-          "Discipline",
-          "Confidence",
-          "Social"
+    data: {
+
+      labels: [
+        "Mental",
+        "Discipline",
+        "Confidence",
+        "Social"
+      ],
+
+      datasets: [{
+        label: "STATUS",
+
+        data: [
+          player.stats.mental,
+          player.stats.discipline,
+          player.stats.confidence,
+          player.stats.social
         ],
 
-        datasets: [
-          {
-            label: "STATUS",
+        fill: true,
 
-            data: [
-              player.stats.mental,
-              player.stats.discipline,
-              player.stats.confidence,
-              player.stats.social
-            ],
+        backgroundColor: "rgba(124,92,255,0.2)",
 
-            fill: true,
+        borderColor: "#7C5CFF",
 
-            backgroundColor:
-              "rgba(124,92,255,0.2)",
+        pointBackgroundColor: "#FFD166",
 
-            borderColor:
-              "#7C5CFF",
+        pointBorderColor: "#fff",
 
-            pointBackgroundColor:
-              "#FFD166",
+        pointHoverBackgroundColor: "#fff",
 
-            pointBorderColor:
-              "#fff",
+        pointHoverBorderColor: "#FFD166"
+      }]
+    },
 
-            pointHoverBackgroundColor:
-              "#fff",
+    options: {
 
-            pointHoverBorderColor:
-              "#FFD166"
-          }
-        ]
+      responsive: true,
+
+      scales: {
+
+        r: {
+
+          angleLines: {
+            color: "rgba(255,255,255,0.1)"
+          },
+
+          grid: {
+            color: "rgba(255,255,255,0.1)"
+          },
+
+          pointLabels: {
+            color: "#DDD",
+            font: {
+              size: 14
+            }
+          },
+
+          ticks: {
+            display: false,
+            stepSize: 1
+          },
+
+          suggestedMin: 0,
+          suggestedMax: 10
+        }
       },
 
-      options: {
+      plugins: {
 
-        responsive: true,
-
-        scales: {
-
-          r: {
-
-            angleLines: {
-              color: "rgba(255,255,255,0.1)"
-            },
-
-            grid: {
-              color: "rgba(255,255,255,0.1)"
-            },
-
-            pointLabels: {
-              color: "#DDD",
-              font: {
-                size: 14
-              }
-            },
-
-            ticks: {
-              display: false,
-              stepSize: 1
-            },
-
-            suggestedMin: 0,
-            suggestedMax: 10
-          }
-        },
-
-        plugins: {
-
-          legend: {
-  display: false
+        legend: {
+          display: false
+        }
+      }
+    }
+  });
 }
-  
-  updateUI();
-  renderQuests();
-});
-function toggleDebug(){
-  devMode = !devMode;
-  log("debug mode: " + devMode);
-}
+
+
 window.addEventListener("DOMContentLoaded", () => {
 
     console.log("DOM READY");
