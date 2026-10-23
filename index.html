@@ -22,7 +22,7 @@
       color:#F3F4F6;
       font-family:'Inter', sans-serif;
       min-height:100vh;
-      padding-bottom: 80px; /* タブバー用の余白 */
+      padding-bottom: 80px;
       overflow-x: hidden;
     }
 
@@ -189,7 +189,6 @@
       cursor:pointer;
     }
 
-    /* ログ履歴カード */
     .log-item {
       background: #222833;
       padding: 16px;
@@ -219,7 +218,6 @@
       margin-top: 8px;
     }
 
-    /* レベルアップ モーダル */
     .levelup-modal{
       position:fixed;
       inset:0;
@@ -250,7 +248,6 @@
       margin-top:10px;
     }
 
-    /* 死と再誕モーダル */
     .death-modal {
       position: fixed;
       inset: 0;
@@ -412,7 +409,7 @@
 
     #statusChart{
       width: 100% !important;
-      height: 280px !important;
+      height: 290px !important;
       display: block;
       margin-top: 10px;
     }
@@ -427,7 +424,6 @@
       cursor: pointer;
     }
 
-    /* 画面切り替え用のタブ設定 */
     .tab-content {
       display: none;
     }
@@ -436,7 +432,6 @@
       display: block;
     }
 
-    /* 下部固定ナビゲーションバー */
     .navbar {
       position: fixed;
       bottom: 0;
@@ -502,10 +497,9 @@
     </div>
   </header>
 
-  <!-- ================= TAB 1: QUEST (メイン) ================= -->
+  <!-- ================= TAB 1: QUEST ================= -->
   <div id="tab-quest" class="tab-content active">
 
-    <!-- EXP -->
     <section class="card">
       <div class="exp-top">
         <span>EXP</span>
@@ -516,7 +510,6 @@
       </div>
     </section>
 
-    <!-- メッセージ -->
     <section class="card">
       <p class="message">
         昨日の自分を、<br>
@@ -524,7 +517,6 @@
       </p>
     </section>
 
-    <!-- クエスト -->
     <section class="card">
       <h2>DAILY QUEST</h2>
       <div class="add-quest">
@@ -554,7 +546,7 @@
 
   </div>
 
-  <!-- ================= TAB 2: LOGS (感情ログ＆振り返り) ================= -->
+  <!-- ================= TAB 2: LOGS ================= -->
   <div id="tab-logs" class="tab-content">
     
     <section class="card">
@@ -574,10 +566,9 @@
 
   </div>
 
-  <!-- ================= TAB 3: PROFILE (プレイヤー詳細) ================= -->
+  <!-- ================= TAB 3: PROFILE ================= -->
   <div id="tab-profile" class="tab-content">
     
-    <!-- プレイヤー名入力・変更 -->
     <section class="card">
       <h2>PLAYER NAME</h2>
       <div class="name-box">
@@ -587,7 +578,6 @@
       <p id="welcomeText">ようこそ、冒険者。</p>
     </section>
 
-    <!-- 称号 -->
     <section class="card">
       <h2>TITLE</h2>
       <div class="title-box">
@@ -595,7 +585,6 @@
       </div>
     </section>
 
-    <!-- ステータス グラフ -->
     <section class="card">
       <h2>STATUS GRAPH</h2>
       <canvas id="statusChart"></canvas>
@@ -722,7 +711,6 @@ const statLabels = {
   social: "🌎 Social"
 };
 
-// タブ切替関数
 function switchTab(tabName) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
@@ -730,7 +718,6 @@ function switchTab(tabName) {
   document.getElementById(`tab-${tabName}`).classList.add('active');
   event.currentTarget.classList.add('active');
 
-  // プロフィールタブを開いた時にチャートをリフレッシュ描画
   if(tabName === 'profile') {
     createStatusChart();
   }
@@ -774,6 +761,7 @@ function checkLevelUp() {
   }
 }
 
+// 視覚的に見やすくなったレーダーチャート描画関数
 function createStatusChart(){
   if(statusChart){
     statusChart.destroy();
@@ -790,10 +778,16 @@ function createStatusChart(){
           player.stats.confidence,
           player.stats.social
         ],
-        backgroundColor: "rgba(124,92,255,0.2)",
+        // ネオン感のある紫の塗りつぶし
+        backgroundColor: "rgba(124, 92, 255, 0.35)",
         borderColor: "#7C5CFF",
-        borderWidth: 2,
-        pointBackgroundColor: "#FFD166"
+        borderWidth: 3,
+        // 頂点のドットを強調
+        pointBackgroundColor: "#FFD166",
+        pointBorderColor: "#FFFFFF",
+        pointBorderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 7
       }]
     },
     options: {
@@ -801,12 +795,28 @@ function createStatusChart(){
       maintainAspectRatio: false,
       scales: {
         r: {
-          suggestedMin: 1,
-          suggestedMax: Math.max(5, ...Object.values(player.stats)) + 2,
-          grid: { color: "rgba(255, 255, 255, 0.1)" },
-          angleLines: { color: "rgba(255, 255, 255, 0.1)" },
-          pointLabels: { color: "#AAA", font: { size: 12 } },
-          ticks: { display: false }
+          suggestedMin: 0,
+          suggestedMax: Math.max(5, ...Object.values(player.stats)) + 3,
+          grid: { 
+            color: "rgba(255, 255, 255, 0.12)",
+            lineWidth: 1
+          },
+          angleLines: { 
+            color: "rgba(255, 255, 255, 0.15)",
+            lineWidth: 1
+          },
+          pointLabels: { 
+            color: "#FFF", 
+            font: { 
+              size: 13, 
+              weight: 'bold',
+              family: "'Inter', sans-serif"
+            } 
+          },
+          ticks: { 
+            display: false,
+            stepSize: 2
+          }
         }
       },
       plugins: {
@@ -863,7 +873,6 @@ function renderQuests(){
   localStorage.setItem("quests", JSON.stringify(quests));
 }
 
-// 感情ログのレンダリング（振り返り機能）
 function renderFeelings() {
   logsList.innerHTML = "";
 
