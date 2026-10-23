@@ -22,6 +22,7 @@
       color:#F3F4F6;
       font-family:'Inter', sans-serif;
       min-height:100vh;
+      padding-bottom: 80px; /* タブバー用の余白 */
       overflow-x: hidden;
     }
 
@@ -55,10 +56,6 @@
       margin-bottom:16px;
       backdrop-filter:blur(10px);
       transition:0.3s;
-    }
-
-    .card:hover{
-      transform:translateY(-2px);
     }
 
     .streak-box{
@@ -169,7 +166,7 @@
 
     textarea{
       width:100%;
-      min-height:120px;
+      min-height:100px;
       margin-top:16px;
       background:#222833;
       border:none;
@@ -177,6 +174,7 @@
       padding:16px;
       color:white;
       resize:none;
+      font-size: 14px;
     }
 
     #saveFeeling{
@@ -189,6 +187,36 @@
       color:white;
       font-weight:bold;
       cursor:pointer;
+    }
+
+    /* ログ履歴カード */
+    .log-item {
+      background: #222833;
+      padding: 16px;
+      border-radius: 14px;
+      margin-top: 12px;
+    }
+
+    .log-date {
+      font-size: 11px;
+      color: #888;
+      margin-bottom: 6px;
+    }
+
+    .log-text {
+      font-size: 14px;
+      line-height: 1.5;
+      color: #EEE;
+      white-space: pre-wrap;
+    }
+
+    .log-del-btn {
+      background: transparent;
+      border: none;
+      color: #FF4D4D;
+      font-size: 11px;
+      cursor: pointer;
+      margin-top: 8px;
     }
 
     /* レベルアップ モーダル */
@@ -222,7 +250,7 @@
       margin-top:10px;
     }
 
-    /* 死と再誕モーダル（俺レベ風） */
+    /* 死と再誕モーダル */
     .death-modal {
       position: fixed;
       inset: 0;
@@ -275,11 +303,6 @@
       cursor: pointer;
       box-shadow: 0 0 15px rgba(124, 92, 255, 0.5);
       transition: 0.3s;
-    }
-
-    .death-btn:hover {
-      opacity: 0.9;
-      transform: scale(1.02);
     }
 
     @keyframes fadeIn {
@@ -403,13 +426,54 @@
       font-size: 10px;
       cursor: pointer;
     }
+
+    /* 画面切り替え用のタブ設定 */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* 下部固定ナビゲーションバー */
+    .navbar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #181C23;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      z-index: 1000;
+    }
+
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: #888;
+      font-size: 12px;
+      font-weight: bold;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .nav-btn.active {
+      color: #00D1B2;
+    }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-<!-- 死と再誕のシステムモーダル（初回・リセット時表示） -->
+<!-- 死と再誕のシステムモーダル -->
 <div class="death-modal" id="deathModal" style="display:none;">
   <div class="death-content">
     <div class="death-title">【 警告：心拍停止 】</div>
@@ -423,18 +487,8 @@
 </div>
 
 <div class="app">
-  
-  <!-- プレイヤー名 -->
-  <section class="card">
-    <h2>PLAYER NAME</h2>
-    <div class="name-box">
-      <input type="text" id="playerNameInput" placeholder="名前を入力...">
-      <button id="saveName">決定</button>
-    </div>
-    <p id="welcomeText">ようこそ、冒険者。</p>
-  </section>
 
-  <!-- ヘッダー -->
+  <!-- ヘッダー（共通） -->
   <header class="header">
     <button id="debugBtn">RESET</button>
     
@@ -448,94 +502,142 @@
     </div>
   </header>
 
-  <!-- EXP -->
-  <section class="card">
-    <div class="exp-top">
-      <span>EXP</span>
-      <span id="expText">0 / 100</span>
-    </div>
-    <div class="exp-bar">
-      <div class="exp-fill" id="expFill"></div>
-    </div>
-  </section>
+  <!-- ================= TAB 1: QUEST (メイン) ================= -->
+  <div id="tab-quest" class="tab-content active">
 
-  <!-- メッセージ -->
-  <section class="card">
-    <p class="message">
-      昨日の自分を、<br>
-      少し超えられれば十分。
-    </p>
-  </section>
+    <!-- EXP -->
+    <section class="card">
+      <div class="exp-top">
+        <span>EXP</span>
+        <span id="expText">0 / 100</span>
+      </div>
+      <div class="exp-bar">
+        <div class="exp-fill" id="expFill"></div>
+      </div>
+    </section>
 
-  <!-- 称号 -->
-  <section class="card">
-    <h2>TITLE</h2>
-    <div class="title-box">
-      <p id="playerTitle">E級 覚醒者</p>
-    </div>
-  </section>
+    <!-- メッセージ -->
+    <section class="card">
+      <p class="message">
+        昨日の自分を、<br>
+        少し超えられれば十分。
+      </p>
+    </section>
 
-  <!-- ステータス -->
-  <section class="card">
-    <h2>STATUS</h2>
-    <canvas id="statusChart"></canvas>
-    <div class="status-grid">
-      <div class="status-item">
-        <span>🧠 Mental</span>
-        <strong id="mental">1</strong>
-      </div>
-      <div class="status-item">
-        <span>💪 Discipline</span>
-        <strong id="discipline">1</strong>
-      </div>
-      <div class="status-item">
-        <span>❤️ Confidence</span>
-        <strong id="confidence">1</strong>
-      </div>
-      <div class="status-item">
-        <span>🌎 Social</span>
-        <strong id="social">1</strong>
-      </div>
-    </div>
-  </section>
+    <!-- クエスト -->
+    <section class="card">
+      <h2>DAILY QUEST</h2>
+      <div class="add-quest">
+        <input type="text" id="questNameInput" placeholder="クエスト名（例: 筋トレ20分）">
+        
+        <div class="add-quest-row">
+          <select id="questDifficultySelect">
+            <option value="E">Eランク（超軽作業: 5分以内 / +10 EXP）</option>
+            <option value="D" selected>Dランク（日常習慣: 15〜30分 / +20 EXP）</option>
+            <option value="C">Cランク（高負荷努力: 1時間以上 / +35 EXP）</option>
+            <option value="B">Bランク（大きな挑戦: 1日作業 / +50 EXP）</option>
+          </select>
+        </div>
 
-  <!-- クエスト -->
-  <section class="card">
-    <h2>DAILY QUEST</h2>
-    <div class="add-quest">
-      <input type="text" id="questNameInput" placeholder="クエスト名（例: 筋トレ20分）">
-      
-      <div class="add-quest-row">
-        <!-- 難易度基準によるEXP設定 -->
-        <select id="questDifficultySelect">
-          <option value="E">Eランク（超軽作業: 5分以内 / +10 EXP）</option>
-          <option value="D" selected>Dランク（日常習慣: 15〜30分 / +20 EXP）</option>
-          <option value="C">Cランク（高負荷努力: 1時間以上 / +35 EXP）</option>
-          <option value="B">Bランク（大きな挑戦: 1日作業 / +50 EXP）</option>
-        </select>
+        <div class="add-quest-row">
+          <select id="questStatSelect">
+            <option value="discipline">💪 Discipline (規律・筋トレ)</option>
+            <option value="mental">🧠 Mental (思考・勉強)</option>
+            <option value="confidence">❤️ Confidence (挑戦・感情)</option>
+            <option value="social">🌎 Social (対話・仕事)</option>
+          </select>
+          <button id="addQuestBtn">クエスト追加</button>
+        </div>
       </div>
+      <div id="questList"></div>
+    </section>
 
-      <div class="add-quest-row">
-        <select id="questStatSelect">
-          <option value="discipline">💪 Discipline (規律・筋トレ)</option>
-          <option value="mental">🧠 Mental (思考・勉強)</option>
-          <option value="confidence">❤️ Confidence (挑戦・感情)</option>
-          <option value="social">🌎 Social (対話・仕事)</option>
-        </select>
-        <button id="addQuestBtn">クエスト追加</button>
+  </div>
+
+  <!-- ================= TAB 2: LOGS (感情ログ＆振り返り) ================= -->
+  <div id="tab-logs" class="tab-content">
+    
+    <section class="card">
+      <h2>FEELING LOG</h2>
+      <p style="font-size: 12px; color: #888; margin-top: 4px;">今日感じたことや気づきを記録して、思考を整理しよう。</p>
+
+      <textarea id="feelingInput" placeholder="今日感じたこと、モヤモヤ、小さな成功体験などを書いてみよう..."></textarea>
+      <button id="saveFeeling">感情ログを保存する</button>
+    </section>
+
+    <section class="card">
+      <h2>PAST LOGS (振り返り)</h2>
+      <div id="logsList" style="margin-top: 10px;">
+        <p style="color: #666; font-size: 12px;">まだログがありません。</p>
       </div>
-    </div>
-    <div id="questList"></div>
-  </section>
+    </section>
 
-  <!-- 感情ログ -->
-  <section class="card">
-    <h2>FEELING LOG</h2>
-    <textarea id="feelingInput" placeholder="今日感じたことを書いてみよう..."></textarea>
-    <button id="saveFeeling">保存する</button>
-  </section>
+  </div>
+
+  <!-- ================= TAB 3: PROFILE (プレイヤー詳細) ================= -->
+  <div id="tab-profile" class="tab-content">
+    
+    <!-- プレイヤー名入力・変更 -->
+    <section class="card">
+      <h2>PLAYER NAME</h2>
+      <div class="name-box">
+        <input type="text" id="playerNameInput" placeholder="名前を入力...">
+        <button id="saveName">決定</button>
+      </div>
+      <p id="welcomeText">ようこそ、冒険者。</p>
+    </section>
+
+    <!-- 称号 -->
+    <section class="card">
+      <h2>TITLE</h2>
+      <div class="title-box">
+        <p id="playerTitle">E級 覚醒者</p>
+      </div>
+    </section>
+
+    <!-- ステータス グラフ -->
+    <section class="card">
+      <h2>STATUS GRAPH</h2>
+      <canvas id="statusChart"></canvas>
+      <div class="status-grid">
+        <div class="status-item">
+          <span>🧠 Mental</span>
+          <strong id="mental">1</strong>
+        </div>
+        <div class="status-item">
+          <span>💪 Discipline</span>
+          <strong id="discipline">1</strong>
+        </div>
+        <div class="status-item">
+          <span>❤️ Confidence</span>
+          <strong id="confidence">1</strong>
+        </div>
+        <div class="status-item">
+          <span>🌎 Social</span>
+          <strong id="social">1</strong>
+        </div>
+      </div>
+    </section>
+
+  </div>
 
 </div>
+
+<!-- 下部固定ナビゲーションバー -->
+<nav class="navbar">
+  <button class="nav-btn active" onclick="switchTab('quest')">
+    <span style="font-size: 18px;">⚔️</span>
+    <span>QUEST</span>
+  </button>
+  <button class="nav-btn" onclick="switchTab('logs')">
+    <span style="font-size: 18px;">📖</span>
+    <span>LOGS</span>
+  </button>
+  <button class="nav-btn" onclick="switchTab('profile')">
+    <span style="font-size: 18px;">👤</span>
+    <span>PROFILE</span>
+  </button>
+</nav>
 
 <!-- レベルアップ モーダル -->
 <div class="levelup-modal" id="levelupModal">
@@ -550,7 +652,6 @@
 <audio id="levelUpSound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
 
 <script>
-// 難易度（ランク）に応じた獲得EXPとステータス上昇値の基準設定
 const DIFFICULTY_CONFIG = {
   E: { name: "Eランク", exp: 10, statGain: 1 },
   D: { name: "Dランク", exp: 20, statGain: 1 },
@@ -577,6 +678,8 @@ let quests = JSON.parse(localStorage.getItem("quests")) || [
   { name: "5分散歩する", difficulty: "D", stat: "mental" }
 ];
 
+let feelings = JSON.parse(localStorage.getItem("feelings")) || [];
+
 const level = document.getElementById("level");
 const expText = document.getElementById("expText");
 const expFill = document.getElementById("expFill");
@@ -598,6 +701,8 @@ const questDifficultySelect = document.getElementById("questDifficultySelect");
 const questStatSelect = document.getElementById("questStatSelect");
 const addQuestBtn = document.getElementById("addQuestBtn");
 
+const logsList = document.getElementById("logsList");
+
 const deathModal = document.getElementById("deathModal");
 const acceptSystemBtn = document.getElementById("acceptSystemBtn");
 
@@ -617,6 +722,20 @@ const statLabels = {
   social: "🌎 Social"
 };
 
+// タブ切替関数
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
+
+  document.getElementById(`tab-${tabName}`).classList.add('active');
+  event.currentTarget.classList.add('active');
+
+  // プロフィールタブを開いた時にチャートをリフレッシュ描画
+  if(tabName === 'profile') {
+    createStatusChart();
+  }
+}
+
 function updateUI(){
   level.innerText = `Lv.${player.level}`;
   expText.innerText = `${player.exp} / 100`;
@@ -628,7 +747,6 @@ function updateUI(){
   confidence.innerText = player.stats.confidence;
   social.innerText = player.stats.social;
 
-  // レベルに応じた称号の自動更新
   if (player.level >= 20) playerTitle.innerText = "S級 覚醒者";
   else if (player.level >= 15) playerTitle.innerText = "A級 覚醒者";
   else if (player.level >= 10) playerTitle.innerText = "B級 覚醒者";
@@ -637,7 +755,6 @@ function updateUI(){
   else playerTitle.innerText = "E級 覚醒者";
 
   localStorage.setItem("player", JSON.stringify(player));
-  createStatusChart();
 }
 
 function checkLevelUp() {
@@ -724,7 +841,6 @@ function renderQuests(){
     button.addEventListener("click", () => {
       player.exp += diffConfig.exp;
       
-      // 該当ステータスを加算
       if (player.stats[quest.stat] !== undefined) {
         player.stats[quest.stat] += diffConfig.statGain;
       } else {
@@ -747,6 +863,57 @@ function renderQuests(){
   localStorage.setItem("quests", JSON.stringify(quests));
 }
 
+// 感情ログのレンダリング（振り返り機能）
+function renderFeelings() {
+  logsList.innerHTML = "";
+
+  if (feelings.length === 0) {
+    logsList.innerHTML = `<p style="color: #666; font-size: 12px;">まだログがありません。</p>`;
+    return;
+  }
+
+  feelings.forEach((item, index) => {
+    const div = document.createElement("div");
+    div.classList.add("log-item");
+
+    div.innerHTML = `
+      <div class="log-date">${item.date}</div>
+      <div class="log-text">${item.text}</div>
+      <button class="log-del-btn" onclick="deleteFeeling(${index})">削除</button>
+    `;
+
+    logsList.appendChild(div);
+  });
+}
+
+function deleteFeeling(index) {
+  if(confirm("このログを削除しますか？")) {
+    feelings.splice(index, 1);
+    localStorage.setItem("feelings", JSON.stringify(feelings));
+    renderFeelings();
+  }
+}
+
+document.getElementById("saveFeeling").addEventListener("click", () => {
+  const input = document.getElementById("feelingInput");
+  const text = input.value.trim();
+
+  if(!text) return;
+
+  const now = new Date();
+  const dateStr = `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+
+  feelings.unshift({
+    date: dateStr,
+    text: text
+  });
+
+  localStorage.setItem("feelings", JSON.stringify(feelings));
+  input.value = "";
+  renderFeelings();
+  alert("感情ログを保存しました！");
+});
+
 saveName.addEventListener("click", () => {
   player.name = playerNameInput.value;
   welcomeText.innerText = `ようこそ、${player.name}。`;
@@ -768,15 +935,6 @@ addQuestBtn.addEventListener("click", () => {
   questNameInput.value = "";
 });
 
-document.getElementById("saveFeeling").addEventListener("click", () => {
-  const text = document.getElementById("feelingInput").value;
-  if(text.trim()) {
-    alert("感情ログを保存しました！");
-    document.getElementById("feelingInput").value = "";
-  }
-});
-
-// RESETボタン処理（死のモーダルを再発動）
 document.getElementById("debugBtn").addEventListener("click", () => {
   if(confirm("現実をリセットし、死亡状態から再やり直ししますか？")) {
     localStorage.clear();
@@ -784,7 +942,6 @@ document.getElementById("debugBtn").addEventListener("click", () => {
   }
 });
 
-// 「システムを受け入れる」ボタン処理
 acceptSystemBtn.addEventListener("click", () => {
   player.initialized = true;
   localStorage.setItem("player", JSON.stringify(player));
@@ -792,7 +949,6 @@ acceptSystemBtn.addEventListener("click", () => {
 });
 
 window.addEventListener("DOMContentLoaded", () => {
-  // 初回起動時の「死と再誕」演出チェック
   if (!player.initialized) {
     deathModal.style.display = "flex";
   }
@@ -804,6 +960,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
   updateUI();
   renderQuests();
+  renderFeelings();
 });
 </script>
 
