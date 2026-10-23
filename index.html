@@ -54,6 +54,11 @@
       padding:20px;
       margin-bottom:16px;
       backdrop-filter:blur(10px);
+      transition:0.3s;
+    }
+
+    .card:hover{
+      transform:translateY(-2px);
     }
 
     .streak-box{
@@ -82,6 +87,7 @@
       height:100%;
       background:linear-gradient(90deg,#FFD166,#7C5CFF);
       transition:0.4s;
+      box-shadow: 0 0 10px rgba(255,209,102,0.5);
     }
 
     .message{
@@ -130,6 +136,17 @@
       padding:10px 14px;
       border-radius:12px;
       cursor:pointer;
+      transition:0.2s;
+    }
+
+    .quest button:active{
+      transform:scale(0.92);
+    }
+
+    .quest button:disabled{
+      background:#4ADE80;
+      opacity:0.8;
+      cursor:default;
     }
 
     textarea{
@@ -167,11 +184,21 @@
     }
 
     .levelup-content{
-      background:#181C23;
+      background: radial-gradient(
+        circle,
+        #2a2f5f,
+        #181C23
+      );
+      border:2px solid #FFD166;
+      box-shadow:
+        0 0 20px #FFD166,
+        0 0 60px rgba(255,209,102,0.4);
       padding:40px;
       border-radius:24px;
       text-align:center;
-      animation:pop 0.5s ease;
+      animation:
+        pop 0.5s ease,
+        glow 1.5s infinite alternate;
     }
 
     .levelup-content h2{
@@ -189,222 +216,129 @@
         transform:scale(0.6);
         opacity:0;
       }
-
       100%{
         transform:scale(1);
         opacity:1;
       }
     }
-/* ======================
-   レベルアップ強化
-====================== */
 
-.levelup-content{
-  background: radial-gradient(
-    circle,
-    #2a2f5f,
-    #181C23
-  );
+    @keyframes glow{
+      from{
+        box-shadow:
+          0 0 10px #FFD166,
+          0 0 30px rgba(255,209,102,0.2);
+      }
+      to{
+        box-shadow:
+          0 0 30px #FFD166,
+          0 0 80px rgba(255,209,102,0.6);
+      }
+    }
 
-  border:2px solid #FFD166;
+    #level{
+      background:linear-gradient(
+        90deg,
+        #FFFFFF,
+        #FFD166
+      );
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+    }
 
-  box-shadow:
-    0 0 20px #FFD166,
-    0 0 60px rgba(255,209,102,0.4);
+    .name-box{
+      display:flex;
+      gap:10px;
+      margin-top:14px;
+    }
 
-  animation:
-    pop 0.5s ease,
-    glow 1.5s infinite alternate;
-}
+    .name-box input{
+      flex:1;
+      background:#222833;
+      border:none;
+      border-radius:12px;
+      padding:14px;
+      color:white;
+      font-size:16px;
+    }
 
-@keyframes glow{
+    .name-box button{
+      border:none;
+      background:#7C5CFF;
+      color:white;
+      padding:0 18px;
+      border-radius:12px;
+      cursor:pointer;
+    }
 
-  from{
-    box-shadow:
-      0 0 10px #FFD166,
-      0 0 30px rgba(255,209,102,0.2);
-  }
+    #welcomeText{
+      margin-top:14px;
+      color:#AAA;
+    }
 
-  to{
-    box-shadow:
-      0 0 30px #FFD166,
-      0 0 80px rgba(255,209,102,0.6);
-  }
-}
+    .title-box{
+      margin-top:16px;
+      background: linear-gradient(135deg, #7C5CFF, #00D1B2);
+      padding:20px;
+      border-radius:18px;
+      text-align:center;
+      box-shadow: 0 0 20px rgba(124,92,255,0.4);
+    }
 
-/* ======================
-   ボタンアニメ
-====================== */
+    #playerTitle{
+      font-size:24px;
+      font-weight:700;
+      letter-spacing:2px;
+    }
 
-.quest button{
-  transition:0.2s;
-}
+    .add-quest{
+      display:flex;
+      gap:10px;
+      margin-top:16px;
+      margin-bottom:16px;
+    }
 
-.quest button:active{
-  transform:scale(0.92);
-}
+    .add-quest input{
+      background:#222833;
+      border:none;
+      border-radius:12px;
+      padding:12px;
+      color:white;
+    }
 
-/* ======================
-   達成済みボタン
-====================== */
+    #questNameInput{
+      flex:1;
+    }
 
-.quest button:disabled{
-  background:#4ADE80;
-  opacity:0.8;
-}
+    #questExpInput{
+      width:80px;
+    }
 
-/* ======================
-   カード浮遊感
-====================== */
+    #addQuestBtn{
+      border:none;
+      background:#00D1B2;
+      color:white;
+      border-radius:12px;
+      padding:0 16px;
+      font-size:20px;
+      cursor:pointer;
+    }
 
-.card{
-  transition:0.3s;
-}
+    #statusChart{
+      width: 100% !important;
+      height: 280px !important;
+      display: block;
+      margin-top: 10px;
+    }
 
-.card:hover{
-  transform:translateY(-2px);
-}
-
-/* ======================
-   EXPバーアニメ
-====================== */
-
-.exp-fill{
-  box-shadow:
-    0 0 10px rgba(255,209,102,0.5);
-}
-
-/* ======================
-   レベル文字
-====================== */
-
-#level{
-  background:linear-gradient(
-    90deg,
-    #FFFFFF,
-    #FFD166
-  );
-
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-/* ======================
-   名前入力
-====================== */
-
-.name-box{
-  display:flex;
-  gap:10px;
-  margin-top:14px;
-}
-
-.name-box input{
-  flex:1;
-  background:#222833;
-  border:none;
-  border-radius:12px;
-  padding:14px;
-  color:white;
-  font-size:16px;
-}
-
-.name-box button{
-  border:none;
-  background:#7C5CFF;
-  color:white;
-  padding:0 18px;
-  border-radius:12px;
-  cursor:pointer;
-}
-
-#welcomeText{
-  margin-top:14px;
-  color:#AAA;
-}
-/* ======================
-   称号
-====================== */
-
-.title-box{
-  margin-top:16px;
-
-  background:
-    linear-gradient(
-      135deg,
-      #7C5CFF,
-      #00D1B2
-    );
-
-  padding:20px;
-
-  border-radius:18px;
-
-  text-align:center;
-
-  box-shadow:
-    0 0 20px rgba(124,92,255,0.4);
-}
-
-#playerTitle{
-  font-size:24px;
-  font-weight:700;
-  letter-spacing:2px;
-}
-/* ======================
-   クエスト追加
-====================== */
-
-.add-quest{
-  display:flex;
-  gap:10px;
-  margin-top:16px;
-  margin-bottom:16px;
-}
-
-.add-quest input{
-  background:#222833;
-  border:none;
-  border-radius:12px;
-  padding:12px;
-  color:white;
-}
-
-#questNameInput{
-  flex:1;
-}
-
-#questExpInput{
-  width:80px;
-}
-
-#addQuestBtn{
-  border:none;
-  background:#00D1B2;
-  color:white;
-  border-radius:12px;
-  padding:0 16px;
-  font-size:20px;
-  cursor:pointer;
-}
-/* ======================
-   ステータスグラフ
-====================== */
-
-#statusChart{
-  margin-top:20px;
-  width:100% !important;
-  max-height:320px;
-}
-#statusChart{
-  width: 100% !important;
-  height: 300px !important;
-  display: block;
-}
-#statusChart{
-  width: 100% !important;
-  height: 300px !important;
-  display: block;
-}
+    #debugBtn {
+      background: transparent;
+      border: 1px solid #444;
+      color: #666;
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 10px;
+      cursor: pointer;
+    }
 
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -414,37 +348,20 @@
 
 <div class="app">
   
-<!-- プレイヤー名 -->
-
-<section class="card">
-
-  <h2>PLAYER NAME</h2>
-
-  <div class="name-box">
-
-    <input
-      type="text"
-      id="playerNameInput"
-      placeholder="名前を入力..."
-    >
-
-    <button id="saveName">
-      決定
-    </button>
-
-  </div>
-
-  <p id="welcomeText">
-    ようこそ、冒険者。
-  </p>
-
-</section>
+  <!-- プレイヤー名 -->
+  <section class="card">
+    <h2>PLAYER NAME</h2>
+    <div class="name-box">
+      <input type="text" id="playerNameInput" placeholder="名前を入力...">
+      <button id="saveName">決定</button>
+    </div>
+    <p id="welcomeText">ようこそ、冒険者。</p>
+  </section>
 
   <!-- ヘッダー -->
   <header class="header">
-    <button id="debugBtn">DEBUG</button>
-  
-
+    <button id="debugBtn">RESET</button>
+    
     <div>
       <p class="small-text">YOUR LEVEL</p>
       <h1 id="level">Lv.1</h1>
@@ -453,144 +370,96 @@
     <div class="streak-box">
       🔥 <span id="streak">0</span> Days
     </div>
-
   </header>
 
   <!-- EXP -->
   <section class="card">
-
     <div class="exp-top">
       <span>EXP</span>
       <span id="expText">0 / 100</span>
     </div>
-
     <div class="exp-bar">
       <div class="exp-fill" id="expFill"></div>
     </div>
-
   </section>
 
   <!-- メッセージ -->
   <section class="card">
-
     <p class="message">
-      昨日の自分を、
+      昨日の自分を、<br>
       少し超えられれば十分。
     </p>
-
   </section>
-<!-- 称号 -->
 
-<section class="card">
-
-  <h2>TITLE</h2>
-
-  <div class="title-box">
-
-    <p id="playerTitle">
-      覚醒者
-    </p>
-
-  </div>
-
-</section>
+  <!-- 称号 -->
+  <section class="card">
+    <h2>TITLE</h2>
+    <div class="title-box">
+      <p id="playerTitle">覚醒者</p>
+    </div>
+  </section>
 
   <!-- ステータス -->
-
   <section class="card">
-
     <h2>STATUS</h2>
-  <canvas id="statusChart"></canvas>
+    <canvas id="statusChart"></canvas>
     <div class="status-grid">
-
       <div class="status-item">
         <span>🧠 Mental</span>
         <strong id="mental">1</strong>
       </div>
-
       <div class="status-item">
         <span>💪 Discipline</span>
         <strong id="discipline">1</strong>
       </div>
-
       <div class="status-item">
         <span>❤️ Confidence</span>
         <strong id="confidence">1</strong>
       </div>
-
       <div class="status-item">
         <span>🌎 Social</span>
         <strong id="social">1</strong>
       </div>
-
     </div>
-
   </section>
 
   <!-- クエスト -->
   <section class="card">
-
     <h2>DAILY QUEST</h2>
-
-<!-- クエスト追加 -->
-
-<div class="add-quest">
-
-  <input
-    type="text"
-    id="questNameInput"
-    placeholder="新しいクエスト"
-  >
-
-  <input
-    type="number"
-    id="questExpInput"
-    placeholder="EXP"
-  >
-
-  <button id="addQuestBtn">
-    ＋
-  </button>
-
-</div>
-
+    <div class="add-quest">
+      <input type="text" id="questNameInput" placeholder="新しいクエスト">
+      <input type="number" id="questExpInput" placeholder="EXP">
+      <button id="addQuestBtn">＋</button>
+    </div>
     <div id="questList"></div>
-
   </section>
 
   <!-- 感情ログ -->
   <section class="card">
-
     <h2>FEELING LOG</h2>
-
-    <textarea
-      id="feelingInput"
-      placeholder="今日感じたことを書いてみよう..."
-    ></textarea>
-
-    <button id="saveFeeling">
-      保存する
-    </button>
-
+    <textarea id="feelingInput" placeholder="今日感じたことを書いてみよう..."></textarea>
+    <button id="saveFeeling">保存する</button>
   </section>
 
 </div>
 
-<!-- レベルアップ -->
+<!-- レベルアップ モーダル -->
 <div class="levelup-modal" id="levelupModal">
-
   <div class="levelup-content">
     <h2>LEVEL UP!</h2>
     <p id="newLevelText">Lv.2</p>
   </div>
-
 </div>
+
+<!-- 効果音 -->
+<audio id="questSound" src="https://assets.mixkit.co/active_storage/sfx/270/270-preview.mp3"></audio>
+<audio id="levelUpSound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
 
 <script>
 const player = JSON.parse(localStorage.getItem("player")) || {
   level: 1,
   exp: 0,
-  streak: 0,
+  streak: 1,
   name: "",
   stats: {
     mental: 1,
@@ -620,20 +489,23 @@ const saveName = document.getElementById("saveName");
 const welcomeText = document.getElementById("welcomeText");
 
 const questList = document.getElementById("questList");
-
 const questNameInput = document.getElementById("questNameInput");
 const questExpInput = document.getElementById("questExpInput");
 const addQuestBtn = document.getElementById("addQuestBtn");
 
-const statusChartCanvas = document.getElementById("statusChart");
+const levelupModal = document.getElementById("levelupModal");
+const newLevelText = document.getElementById("newLevelText");
 
+const questSound = document.getElementById("questSound");
+const levelUpSound = document.getElementById("levelUpSound");
+
+const statusChartCanvas = document.getElementById("statusChart");
 let statusChart;
 
 function updateUI(){
-
-  level.innerText = Lv.${player.level};
-  expText.innerText = ${player.exp} / 100;
-  expFill.style.width = ${player.exp}%;
+  level.innerText = `Lv.${player.level}`;
+  expText.innerText = `${player.exp} / 100`;
+  expFill.style.width = `${Math.min(player.exp, 100)}%`;
   streak.innerText = player.streak;
 
   mental.innerText = player.stats.mental;
@@ -642,23 +514,41 @@ function updateUI(){
   social.innerText = player.stats.social;
 
   localStorage.setItem("player", JSON.stringify(player));
-
   createStatusChart();
 }
 
-function createStatusChart(){
+function checkLevelUp() {
+  if (player.exp >= 100) {
+    player.level += 1;
+    player.exp -= 100;
+    
+    // ステータス加算
+    player.stats.mental += 1;
+    player.stats.discipline += 1;
+    player.stats.confidence += 1;
+    player.stats.social += 1;
 
+    newLevelText.innerText = `Lv.${player.level}`;
+    levelupModal.style.display = "flex";
+    
+    levelUpSound.currentTime = 0;
+    levelUpSound.play().catch(e => console.log("Sound play error:", e));
+
+    setTimeout(() => {
+      levelupModal.style.display = "none";
+    }, 2500);
+  }
+}
+
+function createStatusChart(){
   if(statusChart){
     statusChart.destroy();
   }
 
   statusChart = new Chart(statusChartCanvas, {
-
     type: "radar",
-
     data: {
-      labels: ["Mental","Discipline","Confidence","Social"],
-
+      labels: ["Mental", "Discipline", "Confidence", "Social"],
       datasets: [{
         data: [
           player.stats.mental,
@@ -666,50 +556,56 @@ function createStatusChart(){
           player.stats.confidence,
           player.stats.social
         ],
-
         backgroundColor: "rgba(124,92,255,0.2)",
         borderColor: "#7C5CFF",
-        borderWidth: 2
+        borderWidth: 2,
+        pointBackgroundColor: "#FFD166"
       }]
     },
-
     options: {
       responsive: true,
-
+      maintainAspectRatio: false,
       scales: {
         r: {
           suggestedMin: 0,
-          suggestedMax: 10
+          suggestedMax: 10,
+          grid: { color: "rgba(255, 255, 255, 0.1)" },
+          angleLines: { color: "rgba(255, 255, 255, 0.1)" },
+          pointLabels: { color: "#AAA", font: { size: 12 } },
+          ticks: { display: false }
         }
       },
-
       plugins: {
-        legend: {
-          display: false
-        }
+        legend: { display: false }
       }
     }
   });
 }
 
 function renderQuests(){
-
   questList.innerHTML = "";
 
-  quests.forEach((quest) => {
-
+  quests.forEach((quest, index) => {
     const div = document.createElement("div");
-
     div.classList.add("quest");
 
-    div.innerHTML =       <div>         <h3>${quest.name}</h3>         <p>+${quest.exp} EXP</p>       </div>        <button>完了</button>    ;
+    div.innerHTML = `
+      <div>
+        <h3>${quest.name}</h3>
+        <p>+${quest.exp} EXP</p>
+      </div>
+      <button>完了</button>
+    `;
 
     const button = div.querySelector("button");
 
     button.addEventListener("click", () => {
-
       player.exp += quest.exp;
+      
+      questSound.currentTime = 0;
+      questSound.play().catch(e => console.log("Sound play error:", e));
 
+      checkLevelUp();
       updateUI();
 
       button.innerText = "達成!";
@@ -723,16 +619,12 @@ function renderQuests(){
 }
 
 saveName.addEventListener("click", () => {
-
   player.name = playerNameInput.value;
-
-  welcomeText.innerText = ようこそ、${player.name};
-
+  welcomeText.innerText = `ようこそ、${player.name}。`;
   localStorage.setItem("player", JSON.stringify(player));
 });
 
 addQuestBtn.addEventListener("click", () => {
-
   const name = questNameInput.value;
   const exp = Number(questExpInput.value);
 
@@ -740,41 +632,38 @@ addQuestBtn.addEventListener("click", () => {
     return;
   }
 
-  quests.push({
-    name,
-    exp
-  });
-
+  quests.push({ name, exp });
   renderQuests();
 
   questNameInput.value = "";
   questExpInput.value = "";
 });
 
-window.addEventListener("DOMContentLoaded", () => {
-
-  if(player.name){
-    welcomeText.innerText = ようこそ、${player.name};
+document.getElementById("saveFeeling").addEventListener("click", () => {
+  const text = document.getElementById("feelingInput").value;
+  if(text.trim()) {
+    alert("感情ログを保存しました！");
+    document.getElementById("feelingInput").value = "";
   }
+});
 
+document.getElementById("debugBtn").addEventListener("click", () => {
+  if(confirm("データをリセットしますか？")) {
+    localStorage.clear();
+    location.reload();
+  }
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+  if(player.name){
+    welcomeText.innerText = `ようこそ、${player.name}。`;
+  }
   playerNameInput.value = player.name;
 
   updateUI();
-
   renderQuests();
-});});
+});
 </script>
-<!-- 音 -->
-
-<audio
-  id="questSound"
-  src="https://assets.mixkit.co/active_storage/sfx/270/270-preview.mp3"
-></audio>
-
-<audio
-  id="levelUpSound"
-  src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"
-></audio>
 
 </body>
 </html>
