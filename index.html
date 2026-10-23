@@ -11,7 +11,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-
     *{
       margin:0;
       padding:0;
@@ -23,6 +22,7 @@
       color:#F3F4F6;
       font-family:'Inter', sans-serif;
       min-height:100vh;
+      overflow-x: hidden;
     }
 
     .app{
@@ -129,6 +129,24 @@
       margin-top:12px;
     }
 
+    .quest-info span.tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #333a4d;
+      color: #FFD166;
+      margin-right: 6px;
+    }
+
+    .quest-info span.rank-tag {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: #00D1B2;
+      color: #000;
+      font-weight: bold;
+    }
+
     .quest button{
       border:none;
       background:#7C5CFF;
@@ -173,10 +191,11 @@
       cursor:pointer;
     }
 
+    /* レベルアップ モーダル */
     .levelup-modal{
       position:fixed;
       inset:0;
-      background:rgba(0,0,0,0.7);
+      background:rgba(0,0,0,0.85);
       display:none;
       justify-content:center;
       align-items:center;
@@ -184,21 +203,13 @@
     }
 
     .levelup-content{
-      background: radial-gradient(
-        circle,
-        #2a2f5f,
-        #181C23
-      );
+      background: radial-gradient(circle, #2a2f5f, #181C23);
       border:2px solid #FFD166;
-      box-shadow:
-        0 0 20px #FFD166,
-        0 0 60px rgba(255,209,102,0.4);
+      box-shadow: 0 0 20px #FFD166, 0 0 60px rgba(255,209,102,0.4);
       padding:40px;
       border-radius:24px;
       text-align:center;
-      animation:
-        pop 0.5s ease,
-        glow 1.5s infinite alternate;
+      animation: pop 0.5s ease, glow 1.5s infinite alternate;
     }
 
     .levelup-content h2{
@@ -211,36 +222,83 @@
       margin-top:10px;
     }
 
+    /* 死と再誕モーダル（俺レベ風） */
+    .death-modal {
+      position: fixed;
+      inset: 0;
+      background: #000000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      padding: 20px;
+    }
+
+    .death-content {
+      background: #0A0C10;
+      border: 1px solid #7C5CFF;
+      box-shadow: 0 0 30px rgba(124, 92, 255, 0.4);
+      padding: 30px;
+      border-radius: 20px;
+      max-width: 440px;
+      width: 100%;
+      text-align: center;
+      animation: fadeIn 1s ease;
+    }
+
+    .death-title {
+      font-size: 22px;
+      color: #FF4D4D;
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px rgba(255, 77, 77, 0.5);
+    }
+
+    .death-text {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #CCC;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .death-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #7C5CFF, #00D1B2);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(124, 92, 255, 0.5);
+      transition: 0.3s;
+    }
+
+    .death-btn:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
     @keyframes pop{
-      0%{
-        transform:scale(0.6);
-        opacity:0;
-      }
-      100%{
-        transform:scale(1);
-        opacity:1;
-      }
+      0%{ transform:scale(0.6); opacity:0; }
+      100%{ transform:scale(1); opacity:1; }
     }
 
     @keyframes glow{
-      from{
-        box-shadow:
-          0 0 10px #FFD166,
-          0 0 30px rgba(255,209,102,0.2);
-      }
-      to{
-        box-shadow:
-          0 0 30px #FFD166,
-          0 0 80px rgba(255,209,102,0.6);
-      }
+      from{ box-shadow: 0 0 10px #FFD166, 0 0 30px rgba(255,209,102,0.2); }
+      to{ box-shadow: 0 0 30px #FFD166, 0 0 80px rgba(255,209,102,0.6); }
     }
 
     #level{
-      background:linear-gradient(
-        90deg,
-        #FFFFFF,
-        #FFD166
-      );
+      background:linear-gradient(90deg, #FFFFFF, #FFD166);
       -webkit-background-clip:text;
       -webkit-text-fill-color:transparent;
     }
@@ -292,12 +350,18 @@
 
     .add-quest{
       display:flex;
+      flex-direction: column;
       gap:10px;
       margin-top:16px;
       margin-bottom:16px;
     }
 
-    .add-quest input{
+    .add-quest-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .add-quest input, .add-quest select{
       background:#222833;
       border:none;
       border-radius:12px;
@@ -309,8 +373,8 @@
       flex:1;
     }
 
-    #questExpInput{
-      width:80px;
+    #questDifficultySelect, #questStatSelect {
+      flex: 1;
     }
 
     #addQuestBtn{
@@ -318,8 +382,8 @@
       background:#00D1B2;
       color:white;
       border-radius:12px;
-      padding:0 16px;
-      font-size:20px;
+      padding:12px;
+      font-weight:bold;
       cursor:pointer;
     }
 
@@ -339,12 +403,24 @@
       font-size: 10px;
       cursor: pointer;
     }
-
   </style>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
+
+<!-- 死と再誕のシステムモーダル（初回・リセット時表示） -->
+<div class="death-modal" id="deathModal" style="display:none;">
+  <div class="death-content">
+    <div class="death-title">【 警告：心拍停止 】</div>
+    <div class="death-text">
+      あなたの現実世界の肉体は、限界を迎えました。<br><br>
+      しかし、あなたに［再挑戦の権限］が与えられました。<br>
+      <b>「LEVEL:ME システム」</b>を起動し、プレイヤーとして生まれ変わりますか？
+    </div>
+    <button class="death-btn" id="acceptSystemBtn">［ プレイヤーとして受け入れる ］</button>
+  </div>
+</div>
 
 <div class="app">
   
@@ -368,7 +444,7 @@
     </div>
 
     <div class="streak-box">
-      🔥 <span id="streak">0</span> Days
+      🔥 <span id="streak">1</span> Days
     </div>
   </header>
 
@@ -395,7 +471,7 @@
   <section class="card">
     <h2>TITLE</h2>
     <div class="title-box">
-      <p id="playerTitle">覚醒者</p>
+      <p id="playerTitle">E級 覚醒者</p>
     </div>
   </section>
 
@@ -427,9 +503,27 @@
   <section class="card">
     <h2>DAILY QUEST</h2>
     <div class="add-quest">
-      <input type="text" id="questNameInput" placeholder="新しいクエスト">
-      <input type="number" id="questExpInput" placeholder="EXP">
-      <button id="addQuestBtn">＋</button>
+      <input type="text" id="questNameInput" placeholder="クエスト名（例: 筋トレ20分）">
+      
+      <div class="add-quest-row">
+        <!-- 難易度基準によるEXP設定 -->
+        <select id="questDifficultySelect">
+          <option value="E">Eランク（超軽作業: 5分以内 / +10 EXP）</option>
+          <option value="D" selected>Dランク（日常習慣: 15〜30分 / +20 EXP）</option>
+          <option value="C">Cランク（高負荷努力: 1時間以上 / +35 EXP）</option>
+          <option value="B">Bランク（大きな挑戦: 1日作業 / +50 EXP）</option>
+        </select>
+      </div>
+
+      <div class="add-quest-row">
+        <select id="questStatSelect">
+          <option value="discipline">💪 Discipline (規律・筋トレ)</option>
+          <option value="mental">🧠 Mental (思考・勉強)</option>
+          <option value="confidence">❤️ Confidence (挑戦・感情)</option>
+          <option value="social">🌎 Social (対話・仕事)</option>
+        </select>
+        <button id="addQuestBtn">クエスト追加</button>
+      </div>
     </div>
     <div id="questList"></div>
   </section>
@@ -456,7 +550,16 @@
 <audio id="levelUpSound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
 
 <script>
+// 難易度（ランク）に応じた獲得EXPとステータス上昇値の基準設定
+const DIFFICULTY_CONFIG = {
+  E: { name: "Eランク", exp: 10, statGain: 1 },
+  D: { name: "Dランク", exp: 20, statGain: 1 },
+  C: { name: "Cランク", exp: 35, statGain: 2 },
+  B: { name: "Bランク", exp: 50, statGain: 3 }
+};
+
 const player = JSON.parse(localStorage.getItem("player")) || {
+  initialized: false,
   level: 1,
   exp: 0,
   streak: 1,
@@ -470,14 +573,15 @@ const player = JSON.parse(localStorage.getItem("player")) || {
 };
 
 let quests = JSON.parse(localStorage.getItem("quests")) || [
-  { name: "水を飲む", exp: 10 },
-  { name: "5分散歩する", exp: 15 }
+  { name: "水を飲む", difficulty: "E", stat: "discipline" },
+  { name: "5分散歩する", difficulty: "D", stat: "mental" }
 ];
 
 const level = document.getElementById("level");
 const expText = document.getElementById("expText");
 const expFill = document.getElementById("expFill");
 const streak = document.getElementById("streak");
+const playerTitle = document.getElementById("playerTitle");
 
 const mental = document.getElementById("mental");
 const discipline = document.getElementById("discipline");
@@ -490,8 +594,12 @@ const welcomeText = document.getElementById("welcomeText");
 
 const questList = document.getElementById("questList");
 const questNameInput = document.getElementById("questNameInput");
-const questExpInput = document.getElementById("questExpInput");
+const questDifficultySelect = document.getElementById("questDifficultySelect");
+const questStatSelect = document.getElementById("questStatSelect");
 const addQuestBtn = document.getElementById("addQuestBtn");
+
+const deathModal = document.getElementById("deathModal");
+const acceptSystemBtn = document.getElementById("acceptSystemBtn");
 
 const levelupModal = document.getElementById("levelupModal");
 const newLevelText = document.getElementById("newLevelText");
@@ -501,6 +609,13 @@ const levelUpSound = document.getElementById("levelUpSound");
 
 const statusChartCanvas = document.getElementById("statusChart");
 let statusChart;
+
+const statLabels = {
+  mental: "🧠 Mental",
+  discipline: "💪 Discipline",
+  confidence: "❤️ Confidence",
+  social: "🌎 Social"
+};
 
 function updateUI(){
   level.innerText = `Lv.${player.level}`;
@@ -513,6 +628,14 @@ function updateUI(){
   confidence.innerText = player.stats.confidence;
   social.innerText = player.stats.social;
 
+  // レベルに応じた称号の自動更新
+  if (player.level >= 20) playerTitle.innerText = "S級 覚醒者";
+  else if (player.level >= 15) playerTitle.innerText = "A級 覚醒者";
+  else if (player.level >= 10) playerTitle.innerText = "B級 覚醒者";
+  else if (player.level >= 5) playerTitle.innerText = "C級 覚醒者";
+  else if (player.level >= 3) playerTitle.innerText = "D級 覚醒者";
+  else playerTitle.innerText = "E級 覚醒者";
+
   localStorage.setItem("player", JSON.stringify(player));
   createStatusChart();
 }
@@ -521,12 +644,6 @@ function checkLevelUp() {
   if (player.exp >= 100) {
     player.level += 1;
     player.exp -= 100;
-    
-    // ステータス加算
-    player.stats.mental += 1;
-    player.stats.discipline += 1;
-    player.stats.confidence += 1;
-    player.stats.social += 1;
 
     newLevelText.innerText = `Lv.${player.level}`;
     levelupModal.style.display = "flex";
@@ -567,8 +684,8 @@ function createStatusChart(){
       maintainAspectRatio: false,
       scales: {
         r: {
-          suggestedMin: 0,
-          suggestedMax: 10,
+          suggestedMin: 1,
+          suggestedMax: Math.max(5, ...Object.values(player.stats)) + 2,
           grid: { color: "rgba(255, 255, 255, 0.1)" },
           angleLines: { color: "rgba(255, 255, 255, 0.1)" },
           pointLabels: { color: "#AAA", font: { size: 12 } },
@@ -585,14 +702,19 @@ function createStatusChart(){
 function renderQuests(){
   questList.innerHTML = "";
 
-  quests.forEach((quest, index) => {
+  quests.forEach((quest) => {
     const div = document.createElement("div");
     div.classList.add("quest");
 
+    const diffConfig = DIFFICULTY_CONFIG[quest.difficulty] || DIFFICULTY_CONFIG["E"];
+    const statName = statLabels[quest.stat] || "💪 Discipline";
+
     div.innerHTML = `
-      <div>
-        <h3>${quest.name}</h3>
-        <p>+${quest.exp} EXP</p>
+      <div class="quest-info">
+        <span class="rank-tag">${diffConfig.name}</span>
+        <span class="tag">${statName}</span>
+        <h3 style="margin-top: 4px;">${quest.name}</h3>
+        <p style="font-size: 11px; color: #888; margin-top: 2px;">+${diffConfig.exp} EXP / ステータス +${diffConfig.statGain}</p>
       </div>
       <button>完了</button>
     `;
@@ -600,7 +722,14 @@ function renderQuests(){
     const button = div.querySelector("button");
 
     button.addEventListener("click", () => {
-      player.exp += quest.exp;
+      player.exp += diffConfig.exp;
+      
+      // 該当ステータスを加算
+      if (player.stats[quest.stat] !== undefined) {
+        player.stats[quest.stat] += diffConfig.statGain;
+      } else {
+        player.stats.discipline += diffConfig.statGain;
+      }
       
       questSound.currentTime = 0;
       questSound.play().catch(e => console.log("Sound play error:", e));
@@ -626,17 +755,17 @@ saveName.addEventListener("click", () => {
 
 addQuestBtn.addEventListener("click", () => {
   const name = questNameInput.value;
-  const exp = Number(questExpInput.value);
+  const difficulty = questDifficultySelect.value;
+  const stat = questStatSelect.value;
 
-  if(!name || !exp){
+  if(!name){
     return;
   }
 
-  quests.push({ name, exp });
+  quests.push({ name, difficulty, stat });
   renderQuests();
 
   questNameInput.value = "";
-  questExpInput.value = "";
 });
 
 document.getElementById("saveFeeling").addEventListener("click", () => {
@@ -647,14 +776,27 @@ document.getElementById("saveFeeling").addEventListener("click", () => {
   }
 });
 
+// RESETボタン処理（死のモーダルを再発動）
 document.getElementById("debugBtn").addEventListener("click", () => {
-  if(confirm("データをリセットしますか？")) {
+  if(confirm("現実をリセットし、死亡状態から再やり直ししますか？")) {
     localStorage.clear();
     location.reload();
   }
 });
 
+// 「システムを受け入れる」ボタン処理
+acceptSystemBtn.addEventListener("click", () => {
+  player.initialized = true;
+  localStorage.setItem("player", JSON.stringify(player));
+  deathModal.style.display = "none";
+});
+
 window.addEventListener("DOMContentLoaded", () => {
+  // 初回起動時の「死と再誕」演出チェック
+  if (!player.initialized) {
+    deathModal.style.display = "flex";
+  }
+
   if(player.name){
     welcomeText.innerText = `ようこそ、${player.name}。`;
   }
@@ -666,4 +808,5 @@ window.addEventListener("DOMContentLoaded", () => {
 </script>
 
 </body>
+</html>
 </html>
