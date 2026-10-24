@@ -733,18 +733,27 @@
 // 自分の好きな画像のURLやローカル画像（例: "my_hero.png" など）に変更可能です！
 const AVATAR_IMAGES = {
   guardian: {
-    base: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&auto=format&fit=crop&q=80", // 見習い騎士
-    awakened: "https://images.unsplash.com/photo-1563089145-599997674d42?w=300&auto=format&fit=crop&q=80" // 覚醒重装甲
+    base: "guardian_base.png",
+    awakened: "guardian_awakened.png"
   },
   mage: {
-    base: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&auto=format&fit=crop&q=80", // 見習い魔導士
-    awakened: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=300&auto=format&fit=crop&q=80" // 覚醒大魔導士
+    base: "mage_base.png",
+    awakened: "mage_awakened.png"
   },
   assassin: {
-    base: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=300&auto=format&fit=crop&q=80", // 見習いアサシン
-    awakened: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=300&auto=format&fit=crop&q=80" // 影の君主
+    base: "assassin_base.png",
+    awakened: "assassin_awakened.png"
+  },
+  paladin: {
+    base: "paladin_base.png",
+    awakened: "paladin_awakened.png"
+  },
+  beast: {
+    base: "beast_base.png",
+    awakened: "beast_awakened.png"
   }
 };
+
 
 const DIFFICULTY_CONFIG = {
   E: { name: "Eランク", exp: 10, statGain: 1 },
