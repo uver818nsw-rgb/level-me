@@ -525,5 +525,269 @@
       transition: 0.2s;
     }
 
-    .
+    .nav-btn.active {
+      color: #00D1B2;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<!-- 死と再誕のシステムモーダル -->
+<div class="death-modal" id="deathModal" style="display:none;">
+  <div class="death-content">
+    <div class="death-title">【 警告：心拍停止 】</div>
+    <div class="death-text">
+      あなたの現実世界の肉体は、限界を迎えました。<br><br>
+      しかし、あなたに［再挑戦の権限］が与えられました。<br>
+      <b>「LEVEL:ME システム」</b>を起動し、プレイヤーとして生まれ変わりますか？
+    </div>
+    <button class="death-btn" id="acceptSystemBtn">［ プレイヤーとして受け入れる ］</button>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- ヘッダー（共通） -->
+  <header class="header">
+    <button id="debugBtn">RESET</button>
+    
+    <div>
+      <p class="small-text">YOUR LEVEL</p>
+      <h1 id="level">Lv.1</h1>
+    </div>
+
+    <div class="streak-box">
+      🔥 <span id="streak">1</span> Days
+    </div>
+  </header>
+
+  <!-- ================= TAB 1: QUEST ================= -->
+  <div id="tab-quest" class="tab-content active">
+
+    <section class="card">
+      <div class="exp-top">
+        <span>EXP</span>
+        <span id="expText">0 / 100</span>
+      </div>
+      <div class="exp-bar">
+        <div class="exp-fill" id="expFill"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <p class="message">
+        昨日の自分を、<br>
+        少し超えられれば十分。
+      </p>
+    </section>
+
+    <section class="card">
+      <h2>DAILY QUEST</h2>
+      <div class="add-quest">
+        <input type="text" id="questNameInput" placeholder="クエスト名（例: 筋トレ20分）">
+        
+        <div class="add-quest-row">
+          <select id="questDifficultySelect">
+            <option value="E">Eランク（超軽作業: 5分以内 / +10 EXP）</option>
+            <option value="D" selected>Dランク（日常習慣: 15〜30分 / +20 EXP）</option>
+            <option value="C">Cランク（高負荷努力: 1時間以上 / +35 EXP）</option>
+            <option value="B">Bランク（大きな挑戦: 1日作業 / +50 EXP）</option>
+          </select>
+        </div>
+
+        <div class="add-quest-row">
+          <select id="questStatSelect">
+            <option value="discipline">💪 Discipline (規律・筋トレ)</option>
+            <option value="mental">🧠 Mental (思考・勉強)</option>
+            <option value="confidence">❤️ Confidence (挑戦・感情)</option>
+            <option value="social">🌎 Social (対話・仕事)</option>
+          </select>
+          <button id="addQuestBtn">クエスト追加</button>
+        </div>
+      </div>
+      <div id="questList"></div>
+    </section>
+
+  </div>
+
+  <!-- ================= TAB 2: LOGS ================= -->
+  <div id="tab-logs" class="tab-content">
+    
+    <section class="card">
+      <h2>FEELING LOG</h2>
+      <p style="font-size: 12px; color: #888; margin-top: 4px;">今日感じたことや気づきを記録して、思考を整理しよう。</p>
+
+      <textarea id="feelingInput" placeholder="今日感じたこと、モヤモヤ、小さな成功体験などを書いてみよう..."></textarea>
+      <button id="saveFeeling">感情ログを保存する</button>
+    </section>
+
+    <section class="card">
+      <h2>PAST LOGS (振り返り)</h2>
+      <div id="logsList" style="margin-top: 10px;">
+        <p style="color: #666; font-size: 12px;">まだログがありません。</p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- ================= TAB 3: PROFILE ================= -->
+  <div id="tab-profile" class="tab-content">
+    
+    <!-- キャラクターアバター表示カード -->
+    <section class="card avatar-card">
+      <h2>AVATAR AWAKENING</h2>
+      <div class="avatar-frame">
+        <img id="avatarImg" class="avatar-img" src="" alt="Avatar">
+      </div>
+      <p id="avatarStatusText" style="font-size: 14px; color: #FFD166; font-weight: bold; letter-spacing: 1px;">見習い守護者</p>
+    </section>
+
+    <section class="card">
+      <h2>PLAYER NAME & JOB</h2>
+      <div class="name-box">
+        <input type="text" id="playerNameInput" placeholder="名前を入力...">
+        <button id="saveName">決定</button>
+      </div>
+      <p id="welcomeText" style="margin-top:14px; color:#AAA;">ようこそ、冒険者。</p>
+
+      <!-- 5大ジョブ選択 -->
+      <div class="job-select-box">
+        <select id="jobSelect">
+          <option value="guardian">🛡️ 守護者 (Discipline/規律・筋トレ)</option>
+          <option value="mage">🔮 魔導士 (Mental/思考・勉強)</option>
+          <option value="assassin">⚡ 影の暗殺者 (Confidence/挑戦)</option>
+          <option value="paladin">🌎 聖騎士 (Social/対話・人間関係)</option>
+          <option value="beast">🐺 野獣の闘士 (全方位バランス)</option>
+        </select>
+        <button id="saveJobBtn" style="border:none; background:#7C5CFF; color:white; padding:0 16px; border-radius:12px; cursor:pointer;">変更</button>
+      </div>
+    </section>
+
+    <!-- PLAYER CLASS -->
+    <section class="card">
+      <h2>PLAYER CLASS</h2>
+      <div class="title-box">
+        <p id="playerTitle">E級 覚醒者</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>STATUS GRAPH</h2>
+      <div class="chart-container">
+        <canvas id="statusChart"></canvas>
+      </div>
+      <div class="status-grid">
+        <div class="status-item">
+          <span>🧠 Mental</span>
+          <strong id="mental">1</strong>
+        </div>
+        <div class="status-item">
+          <span>💪 Discipline</span>
+          <strong id="discipline">1</strong>
+        </div>
+        <div class="status-item">
+          <span>❤️ Confidence</span>
+          <strong id="confidence">1</strong>
+        </div>
+        <div class="status-item">
+          <span>🌎 Social</span>
+          <strong id="social">1</strong>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</div>
+
+<!-- 下部固定ナビゲーションバー -->
+<nav class="navbar">
+  <button class="nav-btn active" onclick="switchTab('quest', event)">
+    <span style="font-size: 18px;">⚔️</span>
+    <span>QUEST</span>
+  </button>
+  <button class="nav-btn" onclick="switchTab('logs', event)">
+    <span style="font-size: 18px;">📖</span>
+    <span>LOGS</span>
+  </button>
+  <button class="nav-btn" onclick="switchTab('profile', event)">
+    <span style="font-size: 18px;">👤</span>
+    <span>PROFILE</span>
+  </button>
+</nav>
+
+<!-- レベルアップ モーダル -->
+<div class="levelup-modal" id="levelupModal">
+  <div class="levelup-content">
+    <h2>LEVEL UP!</h2>
+    <p id="newLevelText">Lv.2</p>
+  </div>
+</div>
+
+<!-- 効果音 -->
+<audio id="questSound" src="https://assets.mixkit.co/active_storage/sfx/270/270-preview.mp3"></audio>
+<audio id="levelUpSound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
+
+<script>
+// 📁 各職業・段階ごとの画像ファイル名を設定
+const AVATAR_IMAGES = {
+  guardian: {
+    base: "guardian_base.png",
+    awakened: "guardian_awakened.png"
+  },
+  mage: {
+    base: "mage_base.png",
+    awakened: "mage_awakened.png"
+  },
+  assassin: {
+    base: "assassin_base.png",
+    awakened: "assassin_awakened.png"
+  },
+  paladin: {
+    base: "paladin_base.png",
+    awakened: "paladin_awakened.png"
+  },
+  beast: {
+    base: "beast_base.png",
+    awakened: "beast_awakened.png"
+  }
+};
+
+const DIFFICULTY_CONFIG = {
+  E: { name: "Eランク", exp: 10, statGain: 1 },
+  D: { name: "Dランク", exp: 20, statGain: 1 },
+  C: { name: "Cランク", exp: 35, statGain: 2 },
+  B: { name: "Bランク", exp: 50, statGain: 3 }
+};
+
+const player = JSON.parse(localStorage.getItem("player")) || {
+  initialized: false,
+  level: 1,
+  exp: 0,
+  streak: 1,
+  name: "",
+  job: "guardian",
+  stats: {
+    mental: 1,
+    discipline: 1,
+    confidence: 1,
+    social: 1
+  }
+};
+
+let quests = JSON.parse(localStorage.getItem("quests")) || [
+  { name: "水を飲む", difficulty: "E", stat: "discipline" },
+  { name: "5分散歩する", difficulty: "D", stat: "mental" }
+];
+
+let feelings = JSON.parse(localStorage.getItem("feelings")) || [];
+
+const level = document.getElementById("level");
+const expText = document.getElementById("expText");
+const expFill = document.getElementById("expFill");
+const streak = document.getElementById("streak");
+const playerTitle = document.getElementById("playerTitle");
+const avatar
 </html>
