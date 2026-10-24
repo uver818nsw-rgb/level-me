@@ -218,34 +218,46 @@
       margin-top: 8px;
     }
 
-    /* アバター・覚醒カードデザイン */
+    /* アバター・ビジュアル表示拡張 */
     .avatar-card {
       text-align: center;
       background: radial-gradient(circle, #222833, #181C23);
       border: 2px solid #7C5CFF;
-      box-shadow: 0 0 15px rgba(124, 92, 255, 0.3);
+      box-shadow: 0 0 20px rgba(124, 92, 255, 0.3);
       position: relative;
       overflow: hidden;
     }
 
-    .avatar-icon-wrapper {
-      width: 90px;
-      height: 90px;
-      margin: 0 auto 12px auto;
-      background: #11141B;
-      border: 2px solid #FFD166;
+    .avatar-frame {
+      width: 130px;
+      height: 130px;
+      margin: 10px auto 16px auto;
       border-radius: 50%;
+      background: #000;
+      border: 3px solid #7C5CFF;
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 40px;
-      box-shadow: 0 0 20px rgba(255, 209, 102, 0.4);
-      animation: pulseGlow 2s infinite alternate;
+      position: relative;
+      box-shadow: 0 0 25px rgba(124, 92, 255, 0.6);
+      animation: auraPulse 3s infinite alternate;
+      overflow: hidden;
     }
 
-    @keyframes pulseGlow {
-      from { box-shadow: 0 0 10px rgba(255, 209, 102, 0.3); }
-      to { box-shadow: 0 0 25px rgba(255, 209, 102, 0.7); }
+    /* SVGアバター表示用 */
+    .avatar-svg {
+      width: 80%;
+      height: 80%;
+      filter: drop-shadow(0 0 8px rgba(255, 209, 102, 0.8));
+    }
+
+    @keyframes auraPulse {
+      from {
+        box-shadow: 0 0 15px rgba(124, 92, 255, 0.4), inset 0 0 10px rgba(124, 92, 255, 0.3);
+      }
+      to {
+        box-shadow: 0 0 35px rgba(0, 209, 178, 0.8), inset 0 0 20px rgba(0, 209, 178, 0.5);
+      }
     }
 
     .job-select-box {
@@ -622,11 +634,14 @@
   <!-- ================= TAB 3: PROFILE ================= -->
   <div id="tab-profile" class="tab-content">
     
-    <!-- 覚醒アバター表示カード -->
+    <!-- ビジュアルアバター表示カード -->
     <section class="card avatar-card">
       <h2>AVATAR AWAKENING</h2>
-      <div class="avatar-icon-wrapper" id="avatarIcon">🛡️</div>
-      <p id="avatarStatusText" style="font-size: 13px; color: #FFD166; font-weight: bold;">見習い守護者</p>
+      <div class="avatar-frame" id="avatarFrame">
+        <!-- SVGアバターが動的に挿入されます -->
+        <div id="avatarSvgContainer"></div>
+      </div>
+      <p id="avatarStatusText" style="font-size: 14px; color: #FFD166; font-weight: bold; letter-spacing: 1px;">見習い守護者</p>
     </section>
 
     <section class="card">
@@ -727,7 +742,7 @@ const player = JSON.parse(localStorage.getItem("player")) || {
   exp: 0,
   streak: 1,
   name: "",
-  job: "guardian", // デフォルトジョブ
+  job: "guardian",
   stats: {
     mental: 1,
     discipline: 1,
@@ -748,7 +763,7 @@ const expText = document.getElementById("expText");
 const expFill = document.getElementById("expFill");
 const streak = document.getElementById("streak");
 const playerTitle = document.getElementById("playerTitle");
-const avatarIcon = document.getElementById("avatarIcon");
+const avatarSvgContainer = document.getElementById("avatarSvgContainer");
 const avatarStatusText = document.getElementById("avatarStatusText");
 const jobSelect = document.getElementById("jobSelect");
 
@@ -789,6 +804,22 @@ const statLabels = {
   social: "🌎 Social"
 };
 
+// ジョブ＆覚醒度に応じたSVGアバターグラフィックの定義
+const AVATAR_SVGS = {
+  guardian: {
+    base: `<svg class="avatar-svg" viewBox="0 0 100 100"><path d="M50 10 L85 25 V50 C85 70 50 90 50 90 C50 90 15 70 15 50 V25 Z" fill="#7C5CFF" stroke="#FFD166" stroke-width="4"/><path d="M50 25 L50 75 M30 40 L70 40" stroke="#FFF" stroke-width="4"/></svg>`,
+    awakened: `<svg class="avatar-svg" viewBox="0 0 100 100"><polygon points="50,5 90,25 90,75 50,95 10,75 10,25" fill="#181C23" stroke="#00D1B2" stroke-width="4"/><path d="M50 15 L80 30 V55 C80 70 50 85 50 85 C50 85 20 70 20 55 V30 Z" fill="#7C5CFF" stroke="#FFD166" stroke-width="3"/></svg>`
+  },
+  mage: {
+    base: `<svg class="avatar-svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="35" fill="none" stroke="#00D1B2" stroke-width="4"/><polygon points="50,15 80,75 20,75" fill="rgba(124, 92, 255, 0.6)" stroke="#FFD166" stroke-width="3"/></svg>`,
+    awakened: `<svg class="avatar-svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="#FFD166" stroke-width="3" stroke-dasharray="6,4"/><polygon points="50,10 85,80 15,80" fill="#7C5CFF" stroke="#00D1B2" stroke-width="3"/><polygon points="50,90 15,20 85,20" fill="none" stroke="#00D1B2" stroke-width="2"/></svg>`
+  },
+  assassin: {
+    base: `<svg class="avatar-svg" viewBox="0 0 100 100"><path d="M30 20 L70 20 L80 80 L50 65 L20 80 Z" fill="#222833" stroke="#7C5CFF" stroke-width="4"/><circle cx="50" cy="40" r="8" fill="#FF4D4D"/></svg>`,
+    awakened: `<svg class="avatar-svg" viewBox="0 0 100 100"><path d="M10 50 Q50 10 90 50 Q50 90 10 50 Z" fill="#181C23" stroke="#FF4D4D" stroke-width="3"/><circle cx="50" cy="50" r="18" fill="#7C5CFF" stroke="#FFD166" stroke-width="3"/></svg>`
+  }
+};
+
 function switchTab(tabName, evt) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
@@ -803,10 +834,10 @@ function switchTab(tabName, evt) {
   }
 }
 
-// ジョブとレベルに応じた覚醒アバター・称号の更新
 function updateAvatarAndClass() {
   let rankName = "E級 覚醒者";
   let stage = "見習い";
+  let isAwakened = player.level >= 10;
   
   if (player.level >= 20) { rankName = "S級 覚醒者"; stage = "超越者"; }
   else if (player.level >= 15) { rankName = "A級 覚醒者"; stage = "高位"; }
@@ -816,21 +847,12 @@ function updateAvatarAndClass() {
 
   playerTitle.innerText = rankName;
 
-  let icon = "🛡️";
-  let jobName = "守護者";
+  const jobKeys = { guardian: "守護者", mage: "魔導士", assassin: "影の暗殺者" };
+  const jobName = jobKeys[player.job] || "守護者";
 
-  if (player.job === "guardian") {
-    icon = player.level >= 10 ? "⚔️" : "🛡️";
-    jobName = "守護者";
-  } else if (player.job === "mage") {
-    icon = player.level >= 10 ? "🔮" : "📜";
-    jobName = "魔導士";
-  } else if (player.job === "assassin") {
-    icon = player.level >= 10 ? "🌑" : "⚡";
-    jobName = "影の暗殺者";
-  }
+  const jobSvgGroup = AVATAR_SVGS[player.job] || AVATAR_SVGS["guardian"];
+  avatarSvgContainer.innerHTML = isAwakened ? jobSvgGroup.awakened : jobSvgGroup.base;
 
-  avatarIcon.innerText = icon;
   avatarStatusText.innerText = `${stage}の${jobName} (Lv.${player.level})`;
 }
 
@@ -1086,5 +1108,5 @@ window.addEventListener("DOMContentLoaded", () => {
 </body>
 </html>
 
-実際に開いて、PROFILE画面から好きなジョブを選んだり、レベルが上がって覚醒する雰囲気をぜひ楽しんでみてくださいね！
+これでPROFILEタブを開くと、中央に光るオーラ枠とそれぞれのジョブに応じた専用シンボルアバターが表示されるようになりました！レベル10以上になると覚醒アバターにグラフィックが進化します。
 </html>
