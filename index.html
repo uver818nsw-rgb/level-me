@@ -3,8 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>LEVEL:ME</title>
 
+  <!-- フォント -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
@@ -216,6 +218,7 @@
       margin-top: 8px;
     }
 
+    /* アバターキャラクター画像カード */
     .avatar-card {
       text-align: center;
       background: radial-gradient(circle, #222833, #181C23);
@@ -241,6 +244,7 @@
       overflow: hidden;
     }
 
+    /* キャラクター画像 */
     .avatar-img {
       width: 100%;
       height: 100%;
@@ -281,12 +285,6 @@
       justify-content:center;
       align-items:center;
       z-index:999;
-      pointer-events: none; /* 非表示時の誤操作防止 */
-    }
-
-    .levelup-modal.active {
-      display: flex;
-      pointer-events: auto;
     }
 
     .levelup-content{
@@ -313,15 +311,11 @@
       position: fixed;
       inset: 0;
       background: #000000;
-      display: none;
+      display: flex;
       justify-content: center;
       align-items: center;
       z-index: 10000;
       padding: 20px;
-    }
-
-    .death-modal.active {
-      display: flex;
     }
 
     .death-content {
@@ -540,7 +534,8 @@
 
 <body>
 
-<div class="death-modal" id="deathModal">
+<!-- 死と再誕のシステムモーダル -->
+<div class="death-modal" id="deathModal" style="display:none;">
   <div class="death-content">
     <div class="death-title">【 警告：心拍停止 】</div>
     <div class="death-text">
@@ -554,19 +549,23 @@
 
 <div class="app">
 
+  <!-- ヘッダー（共通） -->
   <header class="header">
     <button id="debugBtn">RESET</button>
+    
     <div>
       <p class="small-text">YOUR LEVEL</p>
       <h1 id="level">Lv.1</h1>
     </div>
+
     <div class="streak-box">
       🔥 <span id="streak">1</span> Days
     </div>
   </header>
 
-  <!-- TAB 1: QUEST -->
+  <!-- ================= TAB 1: QUEST ================= -->
   <div id="tab-quest" class="tab-content active">
+
     <section class="card">
       <div class="exp-top">
         <span>EXP</span>
@@ -578,13 +577,17 @@
     </section>
 
     <section class="card">
-      <p class="message">昨日の自分を、<br>少し超えられれば十分。</p>
+      <p class="message">
+        昨日の自分を、<br>
+        少し超えられれば十分。
+      </p>
     </section>
 
     <section class="card">
       <h2>DAILY QUEST</h2>
       <div class="add-quest">
         <input type="text" id="questNameInput" placeholder="クエスト名（例: 筋トレ20分）">
+        
         <div class="add-quest-row">
           <select id="questDifficultySelect">
             <option value="E">Eランク（超軽作業: 5分以内 / +10 EXP）</option>
@@ -593,6 +596,7 @@
             <option value="B">Bランク（大きな挑戦: 1日作業 / +50 EXP）</option>
           </select>
         </div>
+
         <div class="add-quest-row">
           <select id="questStatSelect">
             <option value="discipline">💪 Discipline (規律・筋トレ)</option>
@@ -605,13 +609,16 @@
       </div>
       <div id="questList"></div>
     </section>
+
   </div>
 
-  <!-- TAB 2: LOGS -->
+  <!-- ================= TAB 2: LOGS ================= -->
   <div id="tab-logs" class="tab-content">
+    
     <section class="card">
       <h2>FEELING LOG</h2>
       <p style="font-size: 12px; color: #888; margin-top: 4px;">今日感じたことや気づきを記録して、思考を整理しよう。</p>
+
       <textarea id="feelingInput" placeholder="今日感じたこと、モヤモヤ、小さな成功体験などを書いてみよう..."></textarea>
       <button id="saveFeeling">感情ログを保存する</button>
     </section>
@@ -622,10 +629,13 @@
         <p style="color: #666; font-size: 12px;">まだログがありません。</p>
       </div>
     </section>
+
   </div>
 
-  <!-- TAB 3: PROFILE -->
+  <!-- ================= TAB 3: PROFILE ================= -->
   <div id="tab-profile" class="tab-content">
+    
+    <!-- キャラクターアバター表示カード -->
     <section class="card avatar-card">
       <h2>AVATAR AWAKENING</h2>
       <div class="avatar-frame">
@@ -642,18 +652,18 @@
       </div>
       <p id="welcomeText" style="margin-top:14px; color:#AAA;">ようこそ、冒険者。</p>
 
+      <!-- ジョブ選択 -->
       <div class="job-select-box">
         <select id="jobSelect">
-          <option value="guardian">🛡️ 守護者 (Discipline/規律・筋トレ)</option>
-          <option value="mage">🔮 魔導士 (Mental/思考・勉強)</option>
-          <option value="assassin">⚡ 影の暗殺者 (Confidence/挑戦)</option>
-          <option value="paladin">🌎 聖騎士 (Social/対話・人間関係)</option>
-          <option value="beast">🐺 野獣の闘士 (全方位バランス)</option>
+          <option value="guardian">🛡️ 守護者 (Discipline特化)</option>
+          <option value="mage">🔮 魔導士 (Mental特化)</option>
+          <option value="assassin">⚡ 影の暗殺者 (Confidence/Social特化)</option>
         </select>
         <button id="saveJobBtn" style="border:none; background:#7C5CFF; color:white; padding:0 16px; border-radius:12px; cursor:pointer;">変更</button>
       </div>
     </section>
 
+    <!-- PLAYER CLASS -->
     <section class="card">
       <h2>PLAYER CLASS</h2>
       <div class="title-box">
@@ -685,25 +695,28 @@
         </div>
       </div>
     </section>
+
   </div>
 
 </div>
 
+<!-- 下部固定ナビゲーションバー -->
 <nav class="navbar">
-  <button class="nav-btn active" id="nav-quest-btn">
+  <button class="nav-btn active" onclick="switchTab('quest', event)">
     <span style="font-size: 18px;">⚔️</span>
     <span>QUEST</span>
   </button>
-  <button class="nav-btn" id="nav-logs-btn">
+  <button class="nav-btn" onclick="switchTab('logs', event)">
     <span style="font-size: 18px;">📖</span>
     <span>LOGS</span>
   </button>
-  <button class="nav-btn" id="nav-profile-btn">
+  <button class="nav-btn" onclick="switchTab('profile', event)">
     <span style="font-size: 18px;">👤</span>
     <span>PROFILE</span>
   </button>
 </nav>
 
+<!-- レベルアップ モーダル -->
 <div class="levelup-modal" id="levelupModal">
   <div class="levelup-content">
     <h2>LEVEL UP!</h2>
@@ -711,14 +724,36 @@
   </div>
 </div>
 
+<!-- 効果音 -->
+<audio id="questSound" src="https://assets.mixkit.co/active_storage/sfx/270/270-preview.mp3"></audio>
+<audio id="levelUpSound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
+
 <script>
+// 💡 ジョブ＆覚醒段階ごとのキャラクター画像URLリスト
+// 自分の好きな画像のURLやローカル画像（例: "my_hero.png" など）に変更可能です！
 const AVATAR_IMAGES = {
-  guardian: { base: "guardian_base.png", awakened: "guardian_awakened.png" },
-  mage: { base: "mage_base.png", awakened: "mage_awakened.png" },
-  assassin: { base: "assassin_base.png", awakened: "assassin_awakened.png" },
-  paladin: { base: "paladin_base.png", awakened: "paladin_awakened.png" },
-  beast: { base: "beast_base.png", awakened: "beast_awakened.png" }
+  guardian: {
+    base: "guardian_base.png",
+    awakened: "guardian_awakened.png"
+  },
+  mage: {
+    base: "mage_base.png",
+    awakened: "mage_awakened.png"
+  },
+  assassin: {
+    base: "assassin_base.png",
+    awakened: "assassin_awakened.png"
+  },
+  paladin: {
+    base: "paladin_base.png",
+    awakened: "paladin_awakened.png"
+  },
+  beast: {
+    base: "beast_base.png",
+    awakened: "beast_awakened.png"
+  }
 };
+
 
 const DIFFICULTY_CONFIG = {
   E: { name: "Eランク", exp: 10, statGain: 1 },
@@ -727,42 +762,27 @@ const DIFFICULTY_CONFIG = {
   B: { name: "Bランク", exp: 50, statGain: 3 }
 };
 
-let player = {
+const player = JSON.parse(localStorage.getItem("player")) || {
   initialized: false,
   level: 1,
   exp: 0,
   streak: 1,
   name: "",
   job: "guardian",
-  stats: { mental: 1, discipline: 1, confidence: 1, social: 1 }
+  stats: {
+    mental: 1,
+    discipline: 1,
+    confidence: 1,
+    social: 1
+  }
 };
 
-try {
-  const savedPlayer = localStorage.getItem("player");
-  if (savedPlayer) {
-    const parsed = JSON.parse(savedPlayer);
-    player = { ...player, ...parsed };
-    if(!player.stats) player.stats = { mental: 1, discipline: 1, confidence: 1, social: 1 };
-  }
-} catch(e) {
-  console.log("Storage load error:", e);
-}
-
-let quests = [
+let quests = JSON.parse(localStorage.getItem("quests")) || [
   { name: "水を飲む", difficulty: "E", stat: "discipline" },
   { name: "5分散歩する", difficulty: "D", stat: "mental" }
 ];
 
-try {
-  const savedQuests = localStorage.getItem("quests");
-  if (savedQuests) quests = JSON.parse(savedQuests);
-} catch(e) {}
-
-let feelings = [];
-try {
-  const savedFeelings = localStorage.getItem("feelings");
-  if (savedFeelings) feelings = JSON.parse(savedFeelings);
-} catch(e) {}
+let feelings = JSON.parse(localStorage.getItem("feelings")) || [];
 
 const level = document.getElementById("level");
 const expText = document.getElementById("expText");
@@ -790,11 +810,15 @@ const questStatSelect = document.getElementById("questStatSelect");
 const addQuestBtn = document.getElementById("addQuestBtn");
 
 const logsList = document.getElementById("logsList");
+
 const deathModal = document.getElementById("deathModal");
 const acceptSystemBtn = document.getElementById("acceptSystemBtn");
 
 const levelupModal = document.getElementById("levelupModal");
 const newLevelText = document.getElementById("newLevelText");
+
+const questSound = document.getElementById("questSound");
+const levelUpSound = document.getElementById("levelUpSound");
 
 const statusChartCanvas = document.getElementById("statusChart");
 let statusChart;
@@ -806,22 +830,21 @@ const statLabels = {
   social: "🌎 Social"
 };
 
-function switchTab(tabName) {
+function switchTab(tabName, evt) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
 
   document.getElementById(`tab-${tabName}`).classList.add('active');
-  document.getElementById(`nav-${tabName}-btn`).classList.add('active');
+  if (evt && evt.currentTarget) {
+    evt.currentTarget.classList.add('active');
+  }
 
   if(tabName === 'profile') {
     createStatusChart();
   }
 }
 
-document.getElementById('nav-quest-btn').addEventListener('click', () => switchTab('quest'));
-document.getElementById('nav-logs-btn').addEventListener('click', () => switchTab('logs'));
-document.getElementById('nav-profile-btn').addEventListener('click', () => switchTab('profile'));
-
+// キャラクター画像とクラスの自動更新
 function updateAvatarAndClass() {
   let rankName = "E級 覚醒者";
   let stage = "見習い";
@@ -835,18 +858,14 @@ function updateAvatarAndClass() {
 
   playerTitle.innerText = rankName;
 
-  const jobNames = {
-    guardian: "守護者",
-    mage: "魔導士",
-    assassin: "影の暗殺者",
-    paladin: "聖騎士",
-    beast: "野獣の闘士"
-  };
-  const currentJobName = jobNames[player.job] || "守護者";
+  const jobKeys = { guardian: "守護者", mage: "魔導士", assassin: "影の暗殺者" };
+  const jobName = jobKeys[player.job] || "守護者";
+
+  // 画像URLの差し替え
   const jobImages = AVATAR_IMAGES[player.job] || AVATAR_IMAGES["guardian"];
   avatarImg.src = isAwakened ? jobImages.awakened : jobImages.base;
 
-  avatarStatusText.innerText = `${stage}の${currentJobName} (Lv.${player.level})`;
+  avatarStatusText.innerText = `${stage}の${jobName} (Lv.${player.level})`;
 }
 
 function updateUI(){
@@ -863,9 +882,7 @@ function updateUI(){
   jobSelect.value = player.job;
   updateAvatarAndClass();
 
-  try {
-    localStorage.setItem("player", JSON.stringify(player));
-  } catch(e) {}
+  localStorage.setItem("player", JSON.stringify(player));
 }
 
 function checkLevelUp() {
@@ -874,61 +891,77 @@ function checkLevelUp() {
     player.exp -= 100;
 
     newLevelText.innerText = `Lv.${player.level}`;
-    levelupModal.classList.add("active");
+    levelupModal.style.display = "flex";
+    
+    levelUpSound.currentTime = 0;
+    levelUpSound.play().catch(e => console.log("Sound play error:", e));
 
     setTimeout(() => {
-      levelupModal.classList.remove("active");
+      levelupModal.style.display = "none";
     }, 2500);
   }
 }
 
 function createStatusChart(){
-  if(typeof Chart === 'undefined') return;
-
   if(statusChart){
     statusChart.destroy();
   }
 
-  try {
-    statusChart = new Chart(statusChartCanvas, {
-      type: "radar",
-      data: {
-        labels: ["Mental", "Discipline", "Confidence", "Social"],
-        datasets: [{
-          data: [
-            player.stats.mental,
-            player.stats.discipline,
-            player.stats.confidence,
-            player.stats.social
-          ],
-          backgroundColor: "rgba(124, 92, 255, 0.35)",
-          borderColor: "#7C5CFF",
-          borderWidth: 3,
-          pointBackgroundColor: "#FFD166",
-          pointBorderColor: "#FFFFFF",
-          pointBorderWidth: 2,
-          pointRadius: 5
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          r: {
-            suggestedMin: 0,
-            suggestedMax: Math.max(5, ...Object.values(player.stats)) + 3,
-            grid: { color: "rgba(255, 255, 255, 0.12)" },
-            angleLines: { color: "rgba(255, 255, 255, 0.15)" },
-            pointLabels: { color: "#FFF", font: { size: 12, weight: 'bold' } },
-            ticks: { display: false }
+  statusChart = new Chart(statusChartCanvas, {
+    type: "radar",
+    data: {
+      labels: ["Mental", "Discipline", "Confidence", "Social"],
+      datasets: [{
+        data: [
+          player.stats.mental,
+          player.stats.discipline,
+          player.stats.confidence,
+          player.stats.social
+        ],
+        backgroundColor: "rgba(124, 92, 255, 0.35)",
+        borderColor: "#7C5CFF",
+        borderWidth: 3,
+        pointBackgroundColor: "#FFD166",
+        pointBorderColor: "#FFFFFF",
+        pointBorderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 7
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        r: {
+          suggestedMin: 0,
+          suggestedMax: Math.max(5, ...Object.values(player.stats)) + 3,
+          grid: { 
+            color: "rgba(255, 255, 255, 0.12)",
+            lineWidth: 1
+          },
+          angleLines: { 
+            color: "rgba(255, 255, 255, 0.15)",
+            lineWidth: 1
+          },
+          pointLabels: { 
+            color: "#FFF", 
+            font: { 
+              size: 13, 
+              weight: 'bold',
+              family: "'Inter', sans-serif"
+            } 
+          },
+          ticks: { 
+            display: false,
+            stepSize: 2
           }
-        },
-        plugins: { legend: { display: false } }
+        }
+      },
+      plugins: {
+        legend: { display: false }
       }
-    });
-  } catch(e) {
-    console.log("Chart render error:", e);
-  }
+    }
+  });
 }
 
 function renderQuests(){
@@ -952,13 +985,18 @@ function renderQuests(){
     `;
 
     const button = div.querySelector("button");
+
     button.addEventListener("click", () => {
       player.exp += diffConfig.exp;
+      
       if (player.stats[quest.stat] !== undefined) {
         player.stats[quest.stat] += diffConfig.statGain;
       } else {
         player.stats.discipline += diffConfig.statGain;
       }
+      
+      questSound.currentTime = 0;
+      questSound.play().catch(e => console.log("Sound play error:", e));
 
       checkLevelUp();
       updateUI();
@@ -970,13 +1008,12 @@ function renderQuests(){
     questList.appendChild(div);
   });
 
-  try {
-    localStorage.setItem("quests", JSON.stringify(quests));
-  } catch(e) {}
+  localStorage.setItem("quests", JSON.stringify(quests));
 }
 
 function renderFeelings() {
   logsList.innerHTML = "";
+
   if (feelings.length === 0) {
     logsList.innerHTML = `<p style="color: #666; font-size: 12px;">まだログがありません。</p>`;
     return;
@@ -999,9 +1036,7 @@ function renderFeelings() {
 function deleteFeeling(index) {
   if(confirm("このログを削除しますか？")) {
     feelings.splice(index, 1);
-    try {
-      localStorage.setItem("feelings", JSON.stringify(feelings));
-    } catch(e) {}
+    localStorage.setItem("feelings", JSON.stringify(feelings));
     renderFeelings();
   }
 }
@@ -1015,11 +1050,12 @@ document.getElementById("saveFeeling").addEventListener("click", () => {
   const now = new Date();
   const dateStr = `${now.getFullYear()}/${now.getMonth() + 1}/${now.getDate()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-  feelings.unshift({ date: dateStr, text: text });
-  try {
-    localStorage.setItem("feelings", JSON.stringify(feelings));
-  } catch(e) {}
+  feelings.unshift({
+    date: dateStr,
+    text: text
+  });
 
+  localStorage.setItem("feelings", JSON.stringify(feelings));
   input.value = "";
   renderFeelings();
   alert("感情ログを保存しました！");
@@ -1028,9 +1064,7 @@ document.getElementById("saveFeeling").addEventListener("click", () => {
 saveName.addEventListener("click", () => {
   player.name = playerNameInput.value;
   welcomeText.innerText = `ようこそ、${player.name}。`;
-  try {
-    localStorage.setItem("player", JSON.stringify(player));
-  } catch(e) {}
+  localStorage.setItem("player", JSON.stringify(player));
 });
 
 saveJobBtn.addEventListener("click", () => {
@@ -1044,7 +1078,9 @@ addQuestBtn.addEventListener("click", () => {
   const difficulty = questDifficultySelect.value;
   const stat = questStatSelect.value;
 
-  if(!name) return;
+  if(!name){
+    return;
+  }
 
   quests.push({ name, difficulty, stat });
   renderQuests();
@@ -1061,21 +1097,19 @@ document.getElementById("debugBtn").addEventListener("click", () => {
 
 acceptSystemBtn.addEventListener("click", () => {
   player.initialized = true;
-  try {
-    localStorage.setItem("player", JSON.stringify(player));
-  } catch(e) {}
-  deathModal.classList.remove("active");
+  localStorage.setItem("player", JSON.stringify(player));
+  deathModal.style.display = "none";
 });
 
 window.addEventListener("DOMContentLoaded", () => {
   if (!player.initialized) {
-    deathModal.classList.add("active");
+    deathModal.style.display = "flex";
   }
 
   if(player.name){
     welcomeText.innerText = `ようこそ、${player.name}。`;
   }
-  playerNameInput.value = player.name || "";
+  playerNameInput.value = player.name;
 
   updateUI();
   renderQuests();
@@ -1085,4 +1119,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
-</html>
+
+PROFILE画面を開くと、円形の発光枠の中にキャラクター画像が表示されます！
+レベルを10以上（テストでEXPを溜めるかコードで一時的に level: 10 にすると確認できます）にすると、画像がより覚醒したビジュアルに切り替わります。
+</html></html>
