@@ -1,3 +1,12 @@
+承知いたしました！
+それでは、ご要望の「A（ジョブ選択）とB（ランク・レベルに応じた覚醒進化）」を組み合わせたアバターシステムを組み込んだ完全版コードを作成します。
+✨ 今回追加・実装する内容
+ * ジョブ選択システム（PROFILE画面）
+   * 「🛡️ 守護者（Discipline特化）」「🔮 魔導士（Mental特化）」「⚡ 影の暗殺者（Confidence/Social特化）」から自分のスタイルに合う初期ジョブを選べるようになります。
+ * クラス（ランク）＆レベル連動の「覚醒アバター演出」
+   * プロフィール画面に、現在のクラス（E級〜S級）とレベルに応じた専用の覚醒アバター（シンボル・オーラエフェクト）がリアルタイムで表示され、レベルやランクが上がるほど見た目が進化・覚醒していきます。
+💻 修正済み完全版コード
+以下のコードをコピーして、そのままHTMLファイルに貼り付けてお試しください！
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -22,7 +31,7 @@
       color:#F3F4F6;
       font-family:'Inter', sans-serif;
       min-height:100vh;
-      padding-bottom: 90px; /* 下部メニュー用の余白 */
+      padding-bottom: 90px;
       overflow-x: hidden;
     }
 
@@ -192,7 +201,7 @@
     .log-item {
       background: #222833;
       padding: 16px;
-      border-radius: 14px;
+      border-radius:14px;
       margin-top: 12px;
     }
 
@@ -216,6 +225,52 @@
       font-size: 11px;
       cursor: pointer;
       margin-top: 8px;
+    }
+
+    /* アバター・覚醒カードデザイン */
+    .avatar-card {
+      text-align: center;
+      background: radial-gradient(circle, #222833, #181C23);
+      border: 2px solid #7C5CFF;
+      box-shadow: 0 0 15px rgba(124, 92, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .avatar-icon-wrapper {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 12px auto;
+      background: #11141B;
+      border: 2px solid #FFD166;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 40px;
+      box-shadow: 0 0 20px rgba(255, 209, 102, 0.4);
+      animation: pulseGlow 2s infinite alternate;
+    }
+
+    @keyframes pulseGlow {
+      from { box-shadow: 0 0 10px rgba(255, 209, 102, 0.3); }
+      to { box-shadow: 0 0 25px rgba(255, 209, 102, 0.7); }
+    }
+
+    .job-select-box {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .job-select-box select {
+      flex: 1;
+      background: #222833;
+      border: none;
+      border-radius: 12px;
+      padding: 12px;
+      color: white;
+      font-size: 14px;
     }
 
     .levelup-modal{
@@ -354,18 +409,18 @@
     }
 
     .title-box{
-      margin-top:16px;
+      margin-top:12px;
       background: linear-gradient(135deg, #7C5CFF, #00D1B2);
-      padding:20px;
-      border-radius:18px;
+      padding:16px;
+      border-radius:16px;
       text-align:center;
-      box-shadow: 0 0 20px rgba(124,92,255,0.4);
+      box-shadow: 0 0 15px rgba(124,92,255,0.4);
     }
 
     #playerTitle{
-      font-size:24px;
+      font-size:20px;
       font-weight:700;
-      letter-spacing:2px;
+      letter-spacing:1px;
     }
 
     .add-quest{
@@ -431,7 +486,6 @@
       cursor: pointer;
     }
 
-    /* タブの切り替え表示 */
     .tab-content {
       display: none;
     }
@@ -440,7 +494,6 @@
       display: block;
     }
 
-    /* 下部固定ナビゲーションバー */
     .navbar {
       position: fixed;
       bottom: 0;
@@ -578,13 +631,30 @@
   <!-- ================= TAB 3: PROFILE ================= -->
   <div id="tab-profile" class="tab-content">
     
+    <!-- 覚醒アバター表示カード -->
+    <section class="card avatar-card">
+      <h2>AVATAR AWAKENING</h2>
+      <div class="avatar-icon-wrapper" id="avatarIcon">🛡️</div>
+      <p id="avatarStatusText" style="font-size: 13px; color: #FFD166; font-weight: bold;">見習い守護者</p>
+    </section>
+
     <section class="card">
-      <h2>PLAYER NAME</h2>
+      <h2>PLAYER NAME & JOB</h2>
       <div class="name-box">
         <input type="text" id="playerNameInput" placeholder="名前を入力...">
         <button id="saveName">決定</button>
       </div>
-      <p id="welcomeText">ようこそ、冒険者。</p>
+      <p id="welcomeText" style="margin-top:14px; color:#AAA;">ようこそ、冒険者。</p>
+
+      <!-- ジョブ選択 -->
+      <div class="job-select-box">
+        <select id="jobSelect">
+          <option value="guardian">🛡️ 守護者 (Discipline特化)</option>
+          <option value="mage">🔮 魔導士 (Mental特化)</option>
+          <option value="assassin">⚡ 影の暗殺者 (Confidence/Social特化)</option>
+        </select>
+        <button id="saveJobBtn" style="border:none; background:#7C5CFF; color:white; padding:0 16px; border-radius:12px; cursor:pointer;">変更</button>
+      </div>
     </section>
 
     <!-- PLAYER CLASS -->
@@ -624,7 +694,7 @@
 
 </div>
 
-<!-- 下部固定ナビゲーションバー（ここを復活させました） -->
+<!-- 下部固定ナビゲーションバー -->
 <nav class="navbar">
   <button class="nav-btn active" onclick="switchTab('quest', event)">
     <span style="font-size: 18px;">⚔️</span>
@@ -666,6 +736,7 @@ const player = JSON.parse(localStorage.getItem("player")) || {
   exp: 0,
   streak: 1,
   name: "",
+  job: "guardian", // デフォルトジョブ
   stats: {
     mental: 1,
     discipline: 1,
@@ -686,6 +757,9 @@ const expText = document.getElementById("expText");
 const expFill = document.getElementById("expFill");
 const streak = document.getElementById("streak");
 const playerTitle = document.getElementById("playerTitle");
+const avatarIcon = document.getElementById("avatarIcon");
+const avatarStatusText = document.getElementById("avatarStatusText");
+const jobSelect = document.getElementById("jobSelect");
 
 const mental = document.getElementById("mental");
 const discipline = document.getElementById("discipline");
@@ -694,6 +768,7 @@ const social = document.getElementById("social");
 
 const playerNameInput = document.getElementById("playerNameInput");
 const saveName = document.getElementById("saveName");
+const saveJobBtn = document.getElementById("saveJobBtn");
 const welcomeText = document.getElementById("welcomeText");
 
 const questList = document.getElementById("questList");
@@ -723,7 +798,6 @@ const statLabels = {
   social: "🌎 Social"
 };
 
-// タブ切替関数
 function switchTab(tabName, evt) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
@@ -738,6 +812,37 @@ function switchTab(tabName, evt) {
   }
 }
 
+// ジョブとレベルに応じた覚醒アバター・称号の更新
+function updateAvatarAndClass() {
+  let rankName = "E級 覚醒者";
+  let stage = "見習い";
+  
+  if (player.level >= 20) { rankName = "S級 覚醒者"; stage = "超越者"; }
+  else if (player.level >= 15) { rankName = "A級 覚醒者"; stage = "高位"; }
+  else if (player.level >= 10) { rankName = "B級 覚醒者"; stage = "精鋭"; }
+  else if (player.level >= 5) { rankName = "C級 覚醒者"; stage = "熟練"; }
+  else if (player.level >= 3) { rankName = "D級 覚醒者"; stage = "中級"; }
+
+  playerTitle.innerText = rankName;
+
+  let icon = "🛡️";
+  let jobName = "守護者";
+
+  if (player.job === "guardian") {
+    icon = player.level >= 10 ? "⚔️" : "🛡️";
+    jobName = "守護者";
+  } else if (player.job === "mage") {
+    icon = player.level >= 10 ? "🔮" : "📜";
+    jobName = "魔導士";
+  } else if (player.job === "assassin") {
+    icon = player.level >= 10 ? "🌑" : "⚡";
+    jobName = "影の暗殺者";
+  }
+
+  avatarIcon.innerText = icon;
+  avatarStatusText.innerText = `${stage}の${jobName} (Lv.${player.level})`;
+}
+
 function updateUI(){
   level.innerText = `Lv.${player.level}`;
   expText.innerText = `${player.exp} / 100`;
@@ -749,12 +854,8 @@ function updateUI(){
   confidence.innerText = player.stats.confidence;
   social.innerText = player.stats.social;
 
-  if (player.level >= 20) playerTitle.innerText = "S級 覚醒者";
-  else if (player.level >= 15) playerTitle.innerText = "A級 覚醒者";
-  else if (player.level >= 10) playerTitle.innerText = "B級 覚醒者";
-  else if (player.level >= 5) playerTitle.innerText = "C級 覚醒者";
-  else if (player.level >= 3) playerTitle.innerText = "D級 覚醒者";
-  else playerTitle.innerText = "E級 覚醒者";
+  jobSelect.value = player.job;
+  updateAvatarAndClass();
 
   localStorage.setItem("player", JSON.stringify(player));
 }
@@ -941,6 +1042,12 @@ saveName.addEventListener("click", () => {
   localStorage.setItem("player", JSON.stringify(player));
 });
 
+saveJobBtn.addEventListener("click", () => {
+  player.job = jobSelect.value;
+  updateUI();
+  alert("ジョブを変更しました！");
+});
+
 addQuestBtn.addEventListener("click", () => {
   const name = questNameInput.value;
   const difficulty = questDifficultySelect.value;
@@ -987,4 +1094,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
 </body>
 </html>
+
+実際に開いて、PROFILE画面から好きなジョブを選んだり、レベルが上がって覚醒する雰囲気をぜひ楽しんでみてくださいね！
 </html>
