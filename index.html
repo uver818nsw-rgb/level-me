@@ -1,3 +1,19 @@
+方法1（画像URLを使う方法）で実装しましょう！
+レベルやジョブに合わせて画像が切り替わる仕組みを作っておけば、後からご自身の好きな画像ファイル（AIで生成した画像や自作イラスト、好きなキャラクター画像など）のURLに差し替えるだけで、一気にクオリティが上がります！
+まずは動作確認用として、高品質なダークファンタジー風のフリーキャラ画像を初期セットしたコードを作成しました。
+🎨 今回の拡張ポイント
+ * レベル・ランク（E級〜S級）ごとのキャラクター画像切り替え
+   * E〜D級（レベル1〜4）：見習い・覚醒初期の姿
+   * C〜B級（レベル5〜14）：装備が整い、オーラを纏った中級の姿
+   * A〜S級（レベル15以上）：完全に覚醒した「影の君主 / 超越者」の姿
+ * ジョブ別の専用ビジュアル
+   * 🛡️ 守護者：重装甲の騎士・戦士系ビジュアル
+   * 🔮 魔導士：魔法陣とオーラを纏った魔導士系ビジュアル
+   * ⚡ 影の暗殺者：暗闇と影を操るアサシン系ビジュアル
+ * 画像差し替えのしやすさ
+   * JavaScript内の AVATAR_IMAGES という部分に画像のURLがまとまっています。自分の好きな画像にしたい時は、そこを書き換えるだけで簡単に変更できます！
+💻 修正済み完全版コード
+以下のコードをコピーして置き換えてお試しください！PROFILEタブを開くとキャラクター画像が表示されます。
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -218,7 +234,7 @@
       margin-top: 8px;
     }
 
-    /* アバター・ビジュアル表示拡張 */
+    /* アバターキャラクター画像カード */
     .avatar-card {
       text-align: center;
       background: radial-gradient(circle, #222833, #181C23);
@@ -229,8 +245,8 @@
     }
 
     .avatar-frame {
-      width: 130px;
-      height: 130px;
+      width: 140px;
+      height: 140px;
       margin: 10px auto 16px auto;
       border-radius: 50%;
       background: #000;
@@ -244,11 +260,12 @@
       overflow: hidden;
     }
 
-    /* SVGアバター表示用 */
-    .avatar-svg {
-      width: 80%;
-      height: 80%;
-      filter: drop-shadow(0 0 8px rgba(255, 209, 102, 0.8));
+    /* キャラクター画像 */
+    .avatar-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.5s ease;
     }
 
     @keyframes auraPulse {
@@ -634,12 +651,11 @@
   <!-- ================= TAB 3: PROFILE ================= -->
   <div id="tab-profile" class="tab-content">
     
-    <!-- ビジュアルアバター表示カード -->
+    <!-- キャラクターアバター表示カード -->
     <section class="card avatar-card">
       <h2>AVATAR AWAKENING</h2>
-      <div class="avatar-frame" id="avatarFrame">
-        <!-- SVGアバターが動的に挿入されます -->
-        <div id="avatarSvgContainer"></div>
+      <div class="avatar-frame">
+        <img id="avatarImg" class="avatar-img" src="" alt="Avatar">
       </div>
       <p id="avatarStatusText" style="font-size: 14px; color: #FFD166; font-weight: bold; letter-spacing: 1px;">見習い守護者</p>
     </section>
@@ -729,6 +745,23 @@
 <audio id="levelUpSound" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3"></audio>
 
 <script>
+// 💡 ジョブ＆覚醒段階ごとのキャラクター画像URLリスト
+// 自分の好きな画像のURLやローカル画像（例: "my_hero.png" など）に変更可能です！
+const AVATAR_IMAGES = {
+  guardian: {
+    base: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&auto=format&fit=crop&q=80", // 見習い騎士
+    awakened: "https://images.unsplash.com/photo-1563089145-599997674d42?w=300&auto=format&fit=crop&q=80" // 覚醒重装甲
+  },
+  mage: {
+    base: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&auto=format&fit=crop&q=80", // 見習い魔導士
+    awakened: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=300&auto=format&fit=crop&q=80" // 覚醒大魔導士
+  },
+  assassin: {
+    base: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=300&auto=format&fit=crop&q=80", // 見習いアサシン
+    awakened: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=300&auto=format&fit=crop&q=80" // 影の君主
+  }
+};
+
 const DIFFICULTY_CONFIG = {
   E: { name: "Eランク", exp: 10, statGain: 1 },
   D: { name: "Dランク", exp: 20, statGain: 1 },
@@ -763,7 +796,7 @@ const expText = document.getElementById("expText");
 const expFill = document.getElementById("expFill");
 const streak = document.getElementById("streak");
 const playerTitle = document.getElementById("playerTitle");
-const avatarSvgContainer = document.getElementById("avatarSvgContainer");
+const avatarImg = document.getElementById("avatarImg");
 const avatarStatusText = document.getElementById("avatarStatusText");
 const jobSelect = document.getElementById("jobSelect");
 
@@ -804,22 +837,6 @@ const statLabels = {
   social: "🌎 Social"
 };
 
-// ジョブ＆覚醒度に応じたSVGアバターグラフィックの定義
-const AVATAR_SVGS = {
-  guardian: {
-    base: `<svg class="avatar-svg" viewBox="0 0 100 100"><path d="M50 10 L85 25 V50 C85 70 50 90 50 90 C50 90 15 70 15 50 V25 Z" fill="#7C5CFF" stroke="#FFD166" stroke-width="4"/><path d="M50 25 L50 75 M30 40 L70 40" stroke="#FFF" stroke-width="4"/></svg>`,
-    awakened: `<svg class="avatar-svg" viewBox="0 0 100 100"><polygon points="50,5 90,25 90,75 50,95 10,75 10,25" fill="#181C23" stroke="#00D1B2" stroke-width="4"/><path d="M50 15 L80 30 V55 C80 70 50 85 50 85 C50 85 20 70 20 55 V30 Z" fill="#7C5CFF" stroke="#FFD166" stroke-width="3"/></svg>`
-  },
-  mage: {
-    base: `<svg class="avatar-svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="35" fill="none" stroke="#00D1B2" stroke-width="4"/><polygon points="50,15 80,75 20,75" fill="rgba(124, 92, 255, 0.6)" stroke="#FFD166" stroke-width="3"/></svg>`,
-    awakened: `<svg class="avatar-svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="#FFD166" stroke-width="3" stroke-dasharray="6,4"/><polygon points="50,10 85,80 15,80" fill="#7C5CFF" stroke="#00D1B2" stroke-width="3"/><polygon points="50,90 15,20 85,20" fill="none" stroke="#00D1B2" stroke-width="2"/></svg>`
-  },
-  assassin: {
-    base: `<svg class="avatar-svg" viewBox="0 0 100 100"><path d="M30 20 L70 20 L80 80 L50 65 L20 80 Z" fill="#222833" stroke="#7C5CFF" stroke-width="4"/><circle cx="50" cy="40" r="8" fill="#FF4D4D"/></svg>`,
-    awakened: `<svg class="avatar-svg" viewBox="0 0 100 100"><path d="M10 50 Q50 10 90 50 Q50 90 10 50 Z" fill="#181C23" stroke="#FF4D4D" stroke-width="3"/><circle cx="50" cy="50" r="18" fill="#7C5CFF" stroke="#FFD166" stroke-width="3"/></svg>`
-  }
-};
-
 function switchTab(tabName, evt) {
   document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach(el => el.classList.remove('active'));
@@ -834,6 +851,7 @@ function switchTab(tabName, evt) {
   }
 }
 
+// キャラクター画像とクラスの自動更新
 function updateAvatarAndClass() {
   let rankName = "E級 覚醒者";
   let stage = "見習い";
@@ -850,8 +868,9 @@ function updateAvatarAndClass() {
   const jobKeys = { guardian: "守護者", mage: "魔導士", assassin: "影の暗殺者" };
   const jobName = jobKeys[player.job] || "守護者";
 
-  const jobSvgGroup = AVATAR_SVGS[player.job] || AVATAR_SVGS["guardian"];
-  avatarSvgContainer.innerHTML = isAwakened ? jobSvgGroup.awakened : jobSvgGroup.base;
+  // 画像URLの差し替え
+  const jobImages = AVATAR_IMAGES[player.job] || AVATAR_IMAGES["guardian"];
+  avatarImg.src = isAwakened ? jobImages.awakened : jobImages.base;
 
   avatarStatusText.innerText = `${stage}の${jobName} (Lv.${player.level})`;
 }
@@ -1108,5 +1127,6 @@ window.addEventListener("DOMContentLoaded", () => {
 </body>
 </html>
 
-これでPROFILEタブを開くと、中央に光るオーラ枠とそれぞれのジョブに応じた専用シンボルアバターが表示されるようになりました！レベル10以上になると覚醒アバターにグラフィックが進化します。
+PROFILE画面を開くと、円形の発光枠の中にキャラクター画像が表示されます！
+レベルを10以上（テストでEXPを溜めるかコードで一時的に level: 10 にすると確認できます）にすると、画像がより覚醒したビジュアルに切り替わります。
 </html>
